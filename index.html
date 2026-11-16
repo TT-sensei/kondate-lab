@@ -162,9 +162,39 @@
   .guide img { width:62px; height:62px; object-fit:contain; flex:0 0 62px; }
   .guide .who { font-size:11.5px; font-weight:800; color:#2e8b57; }
   .guide .line { font-size:14px; line-height:1.45; }
+
+  /* ===== start screen ===== */
+  .start-screen {
+    position:fixed; inset:0; z-index:50; overflow:hidden;
+    background:#FFF6E9; display:flex; flex-direction:column; align-items:center;
+    padding:26px 20px 20px;
+  }
+  .start-screen.hidden { display:none; }
+  .start-screen h1 { font-size:40px; color:#C85A1E; letter-spacing:.05em; }
+  .start-screen .start-sub { font-size:16.5px; color:#8a6d4f; margin:4px 0 14px; }
+  .start-screen img.hero {
+    width:min(900px, 92vw); border-radius:20px; border:4px solid #F3D9B8;
+    box-shadow:0 6px 18px rgba(160,100,30,.18);
+  }
+  .start-btn {
+    font-family:inherit; margin-top:18px; font-size:23px; font-weight:800; cursor:pointer;
+    background:#F08A2E; color:#fff; border:none; border-radius:999px;
+    padding:15px 58px; min-height:60px; box-shadow:0 4px 10px rgba(200,110,30,.35);
+  }
+  .start-btn:active { transform:scale(.97); }
+  .start-note { margin-top:12px; font-size:13.5px; color:#a07c46; }
 </style>
 </head>
 <body>
+
+
+<div class="start-screen" id="startScreen">
+  <h1>こんだてデザイン</h1>
+  <div class="start-sub">6年 家庭科 ｜ 食べる人を考えた 1食分のこんだて</div>
+  <img class="hero" src="assets/top-cooking.jpg" alt="家庭科の調理実習で料理をする子どもたち">
+  <button class="start-btn" id="btnStart" type="button">はじめる ▶</button>
+  <div class="start-note">主食・主菜・副菜・汁ものを そろえて、バランスのよい こんだてを 作ろう</div>
+</div>
 
 <header>
   <div class="logo">🍚</div>
@@ -670,6 +700,10 @@ const btnSound = document.getElementById("btnSound");
 function paintSound() { btnSound.textContent = soundOn ? "🔊" : "🔇"; }
 btnSound.addEventListener("click", () => { soundOn = !soundOn; paintSound(); save(); if (soundOn) play("click"); });
 paintSound();
+document.getElementById("btnStart").addEventListener("click", () => {
+  document.getElementById("startScreen").classList.add("hidden");
+  play("start");
+});
 renderAll(true);
 </script>
 </body>
