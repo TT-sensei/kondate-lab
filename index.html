@@ -302,7 +302,7 @@
   <button class="hbtn challenge" id="btnChallenge" type="button" aria-pressed="false">🎯 バランスチャレンジ</button>
   <button class="hbtn" id="btnRandom" type="button">🎲 おまかせ</button>
   <button class="hbtn" id="btnReset" type="button">↺ リセット</button>
-  <button class="hbtn primary" id="btnResult" type="button" disabled>結果を確認！</button>
+  <button class="hbtn primary" id="btnResult" type="button" disabled>できた！結果を見る</button>
   <button class="hbtn points" id="btnPoints" type="button" aria-pressed="false">🙈 かくす</button>
   <button class="hbtn icon" id="btnSound" type="button" aria-label="音のオン・オフ">🔊</button>
 </header>
@@ -327,9 +327,9 @@
       <div class="challenge-rules">
         <div class="challenge-rule"><span class="num">1</span>主食・主菜・副菜・汁ものを選ぶ</div>
         <div class="challenge-rule"><span class="num">2</span>食材や調理法の組み合わせを考える</div>
-        <div class="challenge-rule"><span class="num">3</span>最後に「結果を確認！」で評価する</div>
+        <div class="challenge-rule"><span class="num">3</span>できたら「できた！結果を見る」を押す</div>
       </div>
-      <div class="challenge-foot" id="challengeFoot">料理を選んでいる間は、ポイントや評価は見えません。自分の考えで献立を完成させよう。</div>
+      <div class="challenge-foot" id="challengeFoot">料理を選び終わったら、画面上の「できた！結果を見る」を押そう。3色のバランスや、組み合わせの工夫を確かめられるよ。</div>
     </div>
 
     <div class="card balance-card is-hidden" id="balanceCard">
@@ -768,11 +768,11 @@ function renderChallengeCard() {
   if (challengeMode) {
     title.textContent = "バランスこんだてチャレンジ";
     message.textContent = "主食・主菜・副菜・汁ものをそろえ、黄・赤・緑のはたらきを見ながら組み合わせよう。食べられるものや家にある食材は人それぞれ。選べるものの中で、調理法も工夫してみよう。";
-    foot.textContent = "ポイントはまだ見えないよ。自分の予想で献立をつくり、「結果を確認！」でチャレンジの達成度を確かめよう。";
+    foot.textContent = "料理を選び終わったら、画面上の「できた！結果を見る」を押そう。3色のバランスや、組み合わせの工夫を確かめられるよ。";
   } else {
     title.textContent = "今日の1食をデザインしよう";
     message.textContent = "主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。食べられるものや家にある食材は人それぞれ。選べるものの中で工夫してみよう。";
-    foot.textContent = "料理を選んでいる間は、ポイントや評価は見えません。自分の考えで献立を完成させよう。";
+    foot.textContent = "料理を選び終わったら、画面上の「できた！結果を見る」を押そう。3色のバランスや、組み合わせの工夫を確かめられるよ。";
   }
 }
 function renderAll(updateGuide) {
@@ -780,7 +780,7 @@ function renderAll(updateGuide) {
   const resultButton = document.getElementById("btnResult");
   const hasChoice = selectedDishes().length > 0 || state.toppings.length > 0;
   resultButton.disabled = !hasChoice;
-  resultButton.textContent = "結果を確認！";
+  resultButton.textContent = "できた！結果を見る";
   const challengeCard = document.getElementById("challengeCard");
   const balanceCard = document.getElementById("balanceCard");
   const judgeCard = document.getElementById("judgeCard");
