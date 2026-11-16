@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>こんだてラボ｜理想のこんだてづくり</title>
+<title>こんだてデザイン｜6年 家庭科</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { height:100%; }
@@ -21,6 +21,9 @@
   }
   header .logo { font-size:30px; }
   header h1 { font-size:25px; letter-spacing:.04em; color:#C85A1E; }
+  header .sub { white-space:nowrap; }
+  .hbtn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+  .hbtn.challenge.active { background:#2f8b64; border-color:#2f8b64; color:#fff; }
   header .sub { font-size:13px; color:#8a6d4f; margin-top:2px; }
   header .spacer { flex:1; }
   .hbtn {
@@ -82,6 +85,18 @@
 
   /* ===== judge ===== */
   .judge-card { flex:1; display:flex; flex-direction:column; min-height:0; }
+  .is-hidden { display:none !important; }
+  .challenge-card { flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0; border:2px solid #F1D7B7; background:linear-gradient(145deg,#fff 0%,#fff9f0 100%); }
+  .challenge-card h2 { font-size:18px; margin-bottom:12px; }
+  .challenge-card p { font-size:15px; line-height:1.65; color:#5f5142; }
+  .challenge-rules { display:grid; gap:8px; margin-top:16px; }
+  .challenge-rule { display:flex; align-items:center; gap:9px; font-size:14px; font-weight:700; color:#735333; }
+  .challenge-rule .num { display:grid; place-items:center; flex:0 0 25px; width:25px; height:25px; border-radius:50%; background:#FBE4C7; color:#A34E12; font-size:12px; }
+  .challenge-foot { margin-top:16px; padding:10px 12px; border-radius:12px; background:#fff0da; color:#8d571e; font-size:13px; line-height:1.5; }
+  .result-checks { display:grid; grid-template-columns:1fr 1fr; gap:6px 8px; margin:4px 0 8px; }
+  .result-check { border-radius:9px; padding:6px 8px; font-size:12.5px; line-height:1.3; background:#f6f1e8; color:#826d50; }
+  .result-check.done { background:#e8f6ec; color:#24734f; font-weight:700; }
+  .result-check.optional { background:#f4f1fc; color:#68568f; }
   .judge-title { font-size:19px; font-weight:800; margin-bottom:6px; }
   .judge-title.good { color:#1d9e6a; }
   .judge-title.warn { color:#d2691e; }
@@ -113,9 +128,9 @@
   /* ===== dish grid ===== */
   .grid-card { flex:1; display:flex; flex-direction:column; min-height:0; }
   .grid-head { font-size:13.5px; color:#8a6d4f; margin-bottom:8px; }
-  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-content:start; overflow:hidden; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-content:start; overflow-y:auto; overflow-x:hidden; padding:0 4px 4px 0; scrollbar-width:thin; }
   .dish-btn {
-    font-family:inherit; cursor:pointer; text-align:left; min-height:118px;
+    font-family:inherit; cursor:pointer; text-align:left; min-height:106px;
     background:#FFFCF6; border:2.5px solid #EAD9BC; border-radius:16px; padding:9px 11px;
     display:flex; flex-direction:column; gap:2px;
   }
@@ -124,13 +139,20 @@
   .dish-btn .top { display:flex; align-items:center; gap:8px; }
   .dish-btn .em { font-size:31px; }
   .dish-btn .nm { font-size:16.5px; font-weight:800; line-height:1.2; }
-  .dish-btn .pts { font-size:13.5px; font-weight:700; letter-spacing:.06em; }
-  .dish-btn .pts .zero { color:#D8CBB2; }
   .dish-btn .meta { font-size:11px; color:#96835f; line-height:1.3; }
   .dish-btn .check { margin-left:auto; font-size:19px; color:#1d9e6a; visibility:hidden; }
   .dish-btn.selected .check { visibility:visible; }
 
   /* ===== navi guide ===== */
+  @media (max-width:1050px) {
+    header { gap:8px; padding:0 10px; }
+    header h1 { font-size:21px; }
+    header .sub { font-size:11px; }
+    .hbtn { font-size:13px; padding:8px 10px; }
+    main { gap:10px; padding:10px; }
+    .left { width:350px; flex-basis:350px; }
+    .grid { grid-template-columns:repeat(3,1fr); }
+  }
   .guide {
     position:fixed; right:16px; bottom:14px; width:308px; z-index:5;
     display:flex; gap:10px; align-items:flex-start; pointer-events:none;
@@ -147,12 +169,14 @@
 <header>
   <div class="logo">🍚</div>
   <div>
-    <h1>こんだてラボ</h1>
-    <div class="sub">5・6年 家庭科 ｜ <ruby>理想<rt>りそう</rt></ruby>のこんだてづくり</div>
+    <h1>こんだてデザイン</h1>
+    <div class="sub">6年 家庭科 ｜ 食べる人を考えた1食分のこんだて</div>
   </div>
   <div class="spacer"></div>
-  <button class="hbtn" id="btnRandom" type="button">🎲 おまかせ ランダム</button>
-  <button class="hbtn" id="btnReset" type="button">↺ さいしょから</button>
+  <button class="hbtn challenge" id="btnChallenge" type="button" aria-pressed="false">🎯 バランスチャレンジ</button>
+  <button class="hbtn" id="btnRandom" type="button">🎲 おまかせ</button>
+  <button class="hbtn" id="btnReset" type="button">↺ リセット</button>
+  <button class="hbtn primary" id="btnResult" type="button" disabled>結果を確認！</button>
   <button class="hbtn icon" id="btnSound" type="button" aria-label="音のオン・オフ">🔊</button>
 </header>
 
@@ -169,8 +193,19 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>3色の はたらきポイント</h2>
+    <div class="card challenge-card" id="challengeCard">
+      <h2 id="challengeTitle">今日の1食をデザインしよう</h2>
+      <p id="challengeText">主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。</p>
+      <div class="challenge-rules">
+        <div class="challenge-rule"><span class="num">1</span>主食・主菜・副菜・汁ものを選ぶ</div>
+        <div class="challenge-rule"><span class="num">2</span>食材や調理法の組み合わせを考える</div>
+        <div class="challenge-rule"><span class="num">3</span>最後に「結果を確認！」で評価する</div>
+      </div>
+      <div class="challenge-foot" id="challengeFoot">料理を選んでいる間は、ポイントや評価は見えません。自分の考えで献立を完成させよう。</div>
+    </div>
+
+    <div class="card balance-card is-hidden" id="balanceCard">
+      <h2>3色の はたらきバランス</h2>
       <div class="bar-row">
         <div class="bar-label"><span class="shape" style="color:#F6AA00">★</span><span>黄<small>エネルギーのもと</small></span></div>
         <div class="bar-track"><div class="bar-fill" id="barY" style="background:#F6AA00"></div></div>
@@ -186,13 +221,15 @@
         <div class="bar-track"><div class="bar-fill" id="barG" style="background:#03AF7A"></div></div>
         <div class="bar-num" id="numG">0</div>
       </div>
-      <div class="bar-note">うすい緑の ゾーン（3〜6）が バランスの めやすだよ</div>
+      <div class="bar-note">各色3〜6ポイントが、学習用のバランスの目安だよ</div>
     </div>
 
-    <div class="card judge-card">
+    <div class="card judge-card is-hidden" id="judgeCard">
       <div class="judge-title" id="judgeTitle">こんだてを 作ってみよう</div>
+      <div class="result-checks" id="resultChecks"></div>
       <ul class="judge-list" id="judgeList"></ul>
-      <div class="allergen-line" id="allergenLine">アレルギー<ruby>表示<rt>ひょうじ</rt></ruby>： まだ えらばれていません</div>
+      <div class="allergen-line" id="allergenLine">登録メニューの主なアレルゲン：まだ料理が選ばれていません</div>
+      <div class="bar-note">※アレルゲンは料理例の登録情報です。実際の材料・商品では原材料表示を確認します。</div>
     </div>
   </section>
 
@@ -238,6 +275,11 @@ const DISHES = [
   { id:"curry", cat:"staple", name:"カレーライス", em:"🍛", y:3,r:2,g:1, method:"にる", alg:["小麦","乳","大豆"] },
   { id:"yakisoba", cat:"staple", name:"やきそば", em:"🍝", y:3,r:1,g:1, method:"いためる", alg:["小麦"] },
   { id:"onigiri", cat:"staple", name:"おにぎり", em:"🍙", y:3,r:0,g:0, method:"そのまま", alg:[] },
+  { id:"chahan", cat:"staple", name:"チャーハン", em:"🍳", y:3,r:2,g:1, method:"いためる", alg:["卵","小麦","大豆"] },
+  { id:"soba", cat:"staple", name:"ざるそば", em:"🥢", y:3,r:0,g:0, method:"ゆでる", alg:["そば","小麦"] },
+  { id:"takikomi", cat:"staple", name:"たきこみごはん", em:"🍚", y:3,r:1,g:1, method:"たく", alg:["小麦","大豆","鶏肉"] },
+  { id:"omurice", cat:"staple", name:"オムライス", em:"🍅", y:3,r:2,g:1, method:"いためる", alg:["卵","乳","鶏肉"] },
+  { id:"zaruudon", cat:"staple", name:"ざるうどん", em:"🍜", y:3,r:0,g:0, method:"ゆでる", alg:["小麦"] },
   /* 主菜 */
   { id:"sake", cat:"main", name:"さけの しおやき", em:"🐟", y:0,r:3,g:0, method:"やく", alg:["さけ"] },
   { id:"karaage", cat:"main", name:"とりの からあげ", em:"🍗", y:1,r:3,g:0, method:"あげる", alg:["小麦","大豆","鶏肉"] },
@@ -246,6 +288,11 @@ const DISHES = [
   { id:"shogayaki", cat:"main", name:"ぶたの しょうがやき", em:"🥩", y:0,r:3,g:0, method:"いためる", alg:["小麦","大豆","豚肉"] },
   { id:"tamagoyaki", cat:"main", name:"たまごやき", em:"🍳", y:1,r:2,g:0, method:"やく", alg:["卵"] },
   { id:"gyoza", cat:"main", name:"ぎょうざ", em:"🥟", y:1,r:2,g:1, method:"やく", alg:["小麦","豚肉","大豆"] },
+  { id:"sabamiso", cat:"main", name:"さばのみそに", em:"🐟", y:0,r:3,g:0, method:"にる", alg:["さば","大豆"] },
+  { id:"teriyaki", cat:"main", name:"とりの てりやき", em:"🍗", y:0,r:3,g:0, method:"やく", alg:["鶏肉","小麦","大豆"] },
+  { id:"tofust steak", cat:"main", name:"とうふステーキ", em:"🧈", y:0,r:2,g:1, method:"やく", alg:["大豆"] },
+  { id:"chickenveg", cat:"main", name:"とり肉と野菜の煮物", em:"🍲", y:1,r:3,g:1, method:"にる", alg:["鶏肉","大豆"] },
+  { id:"atsuage", cat:"main", name:"あつあげのそぼろあん", em:"🍲", y:1,r:2,g:1, method:"にる", alg:["大豆","豚肉"] },
   /* 副菜 */
   { id:"ohitashi", cat:"side", name:"ほうれん草の おひたし", em:"🥬", y:0,r:0,g:3, method:"ゆでる", alg:["大豆"] },
   { id:"salad", cat:"side", name:"サラダ", em:"🥗", y:0,r:0,g:3, method:"そのまま", alg:[] },
@@ -253,13 +300,23 @@ const DISHES = [
   { id:"kinpira", cat:"side", name:"きんぴらごぼう", em:"🥕", y:1,r:0,g:2, method:"いためる", alg:["ごま","大豆"] },
   { id:"nikujaga", cat:"side", name:"肉じゃが", em:"🍲", y:2,r:2,g:1, method:"にる", alg:["牛肉","大豆"], potato:true },
   { id:"hijiki", cat:"side", name:"ひじきの にもの", em:"🫘", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
+  { id:"broccoli", cat:"side", name:"ブロッコリーのおひたし", em:"🥦", y:0,r:0,g:3, method:"ゆでる", alg:[] },
+  { id:"kyuri", cat:"side", name:"きゅうりとわかめの酢の物", em:"🥒", y:0,r:0,g:3, method:"あえる", alg:["ごま"] },
+  { id:"kabocha", cat:"side", name:"かぼちゃの煮物", em:"🎃", y:1,r:0,g:2, method:"にる", alg:[] },
+  { id:"komatsuna", cat:"side", name:"こまつなのごまあえ", em:"🥬", y:0,r:0,g:3, method:"あえる", alg:["ごま"] },
+  { id:"tomato", cat:"side", name:"トマトとレタスのサラダ", em:"🍅", y:0,r:0,g:3, method:"そのまま", alg:[] },
+  { id:"cabbage", cat:"side", name:"キャベツのコールスロー", em:"🥗", y:0,r:0,g:3, method:"あえる", alg:["卵"] },
   /* 汁もの */
   { id:"wakame", cat:"soup", name:"わかめの みそしる", em:"🍵", y:0,r:1,g:1, method:"にる", alg:["大豆"] },
   { id:"tonjiru", cat:"soup", name:"とんじる", em:"🍲", y:1,r:2,g:2, method:"にる", alg:["豚肉","大豆"] },
   { id:"cornsoup", cat:"soup", name:"コーンスープ", em:"🌽", y:2,r:1,g:0, method:"にる", alg:["乳"] },
   { id:"tamagosoupe", cat:"soup", name:"たまごスープ", em:"🥣", y:0,r:1,g:1, method:"にる", alg:["卵","鶏肉"] },
   { id:"kenchin", cat:"soup", name:"けんちんじる", em:"🍵", y:1,r:1,g:2, method:"にる", alg:["大豆","ごま"] },
-  { id:"tofumiso", cat:"soup", name:"とうふの みそしる", em:"🥣", y:0,r:1,g:1, method:"にる", alg:["大豆"] }
+  { id:"tofumiso", cat:"soup", name:"とうふの みそしる", em:"🥣", y:0,r:1,g:1, method:"にる", alg:["大豆"] },
+  { id:"yasaisoup", cat:"soup", name:"やさいスープ", em:"🥣", y:1,r:1,g:2, method:"にる", alg:["鶏肉"] },
+  { id:"daikonmiso", cat:"soup", name:"だいこんのみそしる", em:"🍵", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
+  { id:"minestrone", cat:"soup", name:"ミネストローネ", em:"🍅", y:2,r:1,g:2, method:"にる", alg:["小麦","豚肉"] },
+  { id:"mushroomsoup", cat:"soup", name:"きのこのクリームスープ", em:"🍄", y:2,r:1,g:1, method:"にる", alg:["乳"] }
 ];
 const TOPPINGS = [
   { id:"tp-wakame", name:"わかめ", em:"🌿", y:0,r:0,g:1, alg:[] },
@@ -269,7 +326,11 @@ const TOPPINGS = [
   { id:"tp-cheese", name:"チーズ", em:"🧀", y:0,r:1,g:0, alg:["乳"] },
   { id:"tp-katsuo", name:"かつおぶし", em:"🐟", y:0,r:1,g:0, alg:[] },
   { id:"tp-natto", name:"なっとう", em:"🫘", y:0,r:1,g:0, alg:["大豆"] },
-  { id:"tp-corn", name:"コーン", em:"🌽", y:1,r:0,g:0, alg:[] }
+  { id:"tp-corn", name:"コーン", em:"🌽", y:1,r:0,g:0, alg:[] },
+  { id:"tp-tomato", name:"ミニトマト", em:"🍅", y:0,r:0,g:1, alg:[] },
+  { id:"tp-milk", name:"牛乳", em:"🥛", y:0,r:1,g:0, alg:["乳"] },
+  { id:"tp-fruit", name:"くだもの", em:"🍊", y:0,r:0,g:1, alg:[] },
+  { id:"tp-egg", name:"ゆでたまご", em:"🥚", y:0,r:1,g:0, alg:["卵"] }
 ];
 const byId = {};
 DISHES.concat(TOPPINGS).forEach(d => byId[d.id] = d);
@@ -280,6 +341,8 @@ const SET_KEY = "kondateLab.settings.v1";
 let state = { staple:null, main:null, side:null, soup:null, toppings:[] };
 let activeTab = "staple";
 let soundOn = true;
+let challengeMode = false;
+let evaluated = false;
 try {
   const saved = JSON.parse(localStorage.getItem(MENU_KEY) || "null");
   if (saved && typeof saved === "object") {
@@ -342,11 +405,13 @@ function judge() {
   let level = "building";
   const missing = 4 - dishes.length;
   if (dishes.length === 0 && state.toppings.length === 0) {
-    return { level:"none", title:"こんだてを 作ってみよう", msgs:["右の ボタンから おかずを えらんでね。おまかせ ランダムも あるよ。"], t };
+    return { level:"none", title:"まずは料理を選ぼう", msgs:["主食・主菜・副菜・汁ものを選ぶと、1食分の献立になるよ。"], t,
+      checks:[{label:"4つの料理がそろっている",done:false},{label:"3色のはたらきが目安内",done:false},{label:"調理法に変化がある",done:false}] };
   }
   if (missing > 0) msgs.push("あと " + missing + "品 えらぶと、1食分に なるよ。");
   const fry = dishes.filter(d => d.method === "あげる").length;
   const potato = dishes.filter(d => d.potato).length;
+  const methods = new Set(dishes.map(d => d.method).filter(Boolean));
   let skewed = false;
   GROUPS.forEach(gr => {
     const v = t[gr.key];
@@ -363,13 +428,26 @@ function judge() {
   if (fry >= 2) { skewed = true; msgs.push("あげものが かさなっているよ。1品を「やく」「にる」に かえてみよう。"); }
   if (potato >= 2) { skewed = true; msgs.push("いもが かさなっているよ。黄が 多くなりやすいから 気をつけよう。"); }
   const allIn = GROUPS.every(gr => t[gr.key] >= 3 && t[gr.key] <= 6);
+  const checks = [
+    { label:"主食・主菜・副菜・汁ものがそろっている", done:missing === 0 },
+    { label:"黄・赤・緑のはたらきが目安内", done:allIn },
+    { label:"揚げ物が重なっていない", done:fry < 2 },
+    { label:"いも料理が重なっていない", done:potato < 2 },
+    { label:"調理法に2種類以上の工夫がある", done:methods.size >= 2, optional:true }
+  ];
   if (missing === 0 && allIn && fry < 2 && potato < 2) {
     level = "good";
-    return { level, title:"バランス ばっちり！🎉", msgs:["3色が そろった、理想のこんだてだね。お膳の ならべ方も チェックしてみよう。"], t };
+    const message = methods.size >= 2
+      ? "3色のはたらきがそろい、調理法にも変化があるね。食べる人を考えた献立になっているよ。"
+      : "3色のはたらきはそろったね。調理法をもう1種類取り入れると、さらに工夫できるよ。";
+    return { level, title:"バランス ばっちり！🎉", msgs:[message], t, checks };
+  }
+  if (missing === 0 && methods.size < 2) {
+    msgs.push("調理法が1種類にかたよっているよ。「焼く」「煮る」「ゆでる」などを組み合わせてみよう。");
   }
   if (skewed) level = "skewed";
   if (msgs.length === 0) msgs.push("いい感じ！ 3色の ポイントを 見ながら、もう少し 工夫してみよう。");
-  return { level, title: level === "skewed" ? "あと少し 工夫できそう" : "作っている とちゅう", msgs: msgs.slice(0,3), t };
+  return { level, title: level === "skewed" ? "あと少し 工夫できそう" : "作っている とちゅう", msgs: msgs.slice(0,3), t, checks };
 }
 
 /* ================= render ================= */
@@ -416,13 +494,13 @@ function dishButton(d, selected, onClick) {
   const b = document.createElement("button");
   b.type = "button";
   b.className = "dish-btn" + (selected ? " selected" : "");
+  b.setAttribute("aria-pressed", selected ? "true" : "false");
   b.dataset.dishId = d.id;
   const meta = [];
   if (d.method) meta.push("調理法： " + d.method);
   if (d.alg && d.alg.length) meta.push("アレルギー： " + d.alg.join("・"));
   b.innerHTML =
     "<div class='top'><span class='em'>" + d.em + "</span><span class='nm'>" + d.name + "</span><span class='check'>✔</span></div>" +
-    "<div class='pts'>" + ptsHtml(d) + "</div>" +
     (meta.length ? "<div class='meta'>" + meta.join("<br>") + "</div>" : "");
   b.addEventListener("click", onClick);
   return b;
@@ -471,40 +549,88 @@ function renderJudge(j) {
   const alg = new Set();
   selectedDishes().concat(state.toppings.map(id => byId[id])).forEach(d => (d.alg || []).forEach(a => alg.add(a)));
   document.getElementById("allergenLine").textContent =
-    "アレルギー表示（29品目）： " + (alg.size ? Array.from(alg).join("・") : "ふくまれていません");
+    "登録メニューの主なアレルゲン： " + (alg.size ? Array.from(alg).join("・") : "登録情報では該当なし");
+  const checksEl = document.getElementById("resultChecks");
+  checksEl.innerHTML = "";
+  (j.checks || []).forEach(check => {
+    const item = document.createElement("div");
+    item.className = "result-check" + (check.done ? " done" : "") + (check.optional ? " optional" : "");
+    item.textContent = (check.done ? "✓ " : "○ ") + check.label;
+    checksEl.appendChild(item);
+  });
 }
 let wasGood = false;
+function renderChallengeCard() {
+  const title = document.getElementById("challengeTitle");
+  const message = document.getElementById("challengeText");
+  const foot = document.getElementById("challengeFoot");
+  const button = document.getElementById("btnChallenge");
+  button.classList.toggle("active", challengeMode);
+  button.setAttribute("aria-pressed", challengeMode ? "true" : "false");
+  if (challengeMode) {
+    title.textContent = "バランスこんだてチャレンジ";
+    message.textContent = "主食・主菜・副菜・汁ものをそろえ、黄・赤・緑のはたらきが整う1食分をつくろう。料理を選ぶときは、食材や調理法の組み合わせも考えてみよう。";
+    foot.textContent = "ポイントはまだ見えないよ。自分の予想で献立をつくり、「結果を確認！」でチャレンジの達成度を確かめよう。";
+  } else {
+    title.textContent = "今日の1食をデザインしよう";
+    message.textContent = "主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。";
+    foot.textContent = "料理を選んでいる間は、ポイントや評価は見えません。自分の考えで献立を完成させよう。";
+  }
+}
 function renderAll(updateGuide) {
   renderSlots(); renderTabs(); renderGrid(); renderTray();
-  const j = judge();
-  renderBars(j.t); renderJudge(j);
-  if (updateGuide !== false) {
-    if (j.level === "good") {
-      guideSay("バランス ばっちり！ 3色そろったね。", "08-celebrating");
-      if (!wasGood) {
-        play("correct");
-        const tray = document.getElementById("tray");
-        if (window.EduEffects && tray) { try { EduEffects.confetti(tray, 26); } catch(e) {} }
+  const resultButton = document.getElementById("btnResult");
+  const hasChoice = selectedDishes().length > 0 || state.toppings.length > 0;
+  resultButton.disabled = !hasChoice;
+  resultButton.textContent = "結果を確認！";
+  const challengeCard = document.getElementById("challengeCard");
+  const balanceCard = document.getElementById("balanceCard");
+  const judgeCard = document.getElementById("judgeCard");
+  challengeCard.classList.toggle("is-hidden", evaluated);
+  balanceCard.classList.toggle("is-hidden", !evaluated);
+  judgeCard.classList.toggle("is-hidden", !evaluated);
+  renderChallengeCard();
+
+  if (evaluated) {
+    const j = judge();
+    renderBars(j.t);
+    renderJudge(j);
+    if (updateGuide !== false) {
+      if (j.level === "good") {
+        guideSay(challengeMode ? "チャレンジ達成！よく考えたね！" : "バランスばっちり！3色そろったね。", "08-celebrating");
+        if (!wasGood) {
+          play("correct");
+          const tray = document.getElementById("tray");
+          if (window.EduEffects && tray) { try { EduEffects.confetti(tray, 26); } catch(e) {} }
+        }
+      } else {
+        guideSay("結果を見て、料理の組み合わせを工夫してみよう。", "04-idea");
       }
-    } else if (j.level === "skewed") {
-      guideSay("あと少し！ ヒントを 見て 工夫してみよう。", "04-idea");
-    } else if (j.level === "building") {
-      guideSay("いい感じに 作れているよ。その調子！", "02-happy");
-    } else {
-      guideSay("4つの おかずを えらんで、理想のこんだてを 作ろう！", "01-normal-smile");
+    }
+    wasGood = (j.level === "good");
+  } else {
+    wasGood = false;
+    if (updateGuide !== false) {
+      const selectedCount = selectedDishes().length;
+      if (challengeMode) {
+        guideSay(selectedCount ? "いいね！4つの料理をそろえて、完成したら結果を確かめよう。" : "バランスこんだてチャレンジ！自分の考えで組み立てよう。", selectedCount ? "02-happy" : "01-normal-smile");
+      } else {
+        guideSay(selectedCount ? "いい組み合わせかな？食べる人のことを考えて選ぼう。" : "主食・主菜・副菜・汁ものを選んで、1食分をつくろう！", "01-normal-smile");
+      }
     }
   }
-  wasGood = (j.level === "good");
   save();
 }
 
 /* ================= actions ================= */
 function selectDish(catId, dishId) {
+  evaluated = false;
   state[catId] = (state[catId] === dishId) ? null : dishId;
   play("decide");
   renderAll(true);
 }
 function toggleTopping(id) {
+  evaluated = false;
   const i = state.toppings.indexOf(id);
   if (i >= 0) state.toppings.splice(i, 1);
   else {
@@ -515,6 +641,7 @@ function toggleTopping(id) {
   renderAll(true);
 }
 document.getElementById("btnRandom").addEventListener("click", () => {
+  evaluated = false;
   CATS.forEach(c => {
     const list = DISHES.filter(d => d.cat === c.id);
     state[c.id] = list[Math.floor(Math.random() * list.length)].id;
@@ -529,8 +656,20 @@ document.getElementById("btnRandom").addEventListener("click", () => {
   save();
 });
 document.getElementById("btnReset").addEventListener("click", () => {
+  evaluated = false;
   state = { staple:null, main:null, side:null, soup:null, toppings:[] };
   play("click");
+  renderAll(true);
+});
+document.getElementById("btnChallenge").addEventListener("click", () => {
+  challengeMode = !challengeMode;
+  evaluated = false;
+  play("click");
+  renderAll(true);
+});
+document.getElementById("btnResult").addEventListener("click", () => {
+  evaluated = true;
+  play("decide");
   renderAll(true);
 });
 const btnSound = document.getElementById("btnSound");
