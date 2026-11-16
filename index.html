@@ -323,7 +323,7 @@
 
     <div class="card challenge-card" id="challengeCard">
       <h2 id="challengeTitle">今日の1食をデザインしよう</h2>
-      <p id="challengeText">主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。</p>
+      <p id="challengeText">主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。食べられるものや家にある食材は人それぞれ。選べるものの中で工夫してみよう。</p>
       <div class="challenge-rules">
         <div class="challenge-rule"><span class="num">1</span>主食・主菜・副菜・汁ものを選ぶ</div>
         <div class="challenge-rule"><span class="num">2</span>食材や調理法の組み合わせを考える</div>
@@ -357,7 +357,7 @@
       <div class="result-checks" id="resultChecks"></div>
       <ul class="judge-list" id="judgeList"></ul>
       <div class="allergen-line" id="allergenLine">登録メニューの主なアレルゲン：まだ料理が選ばれていません</div>
-      <div class="bar-note">※アレルゲンは料理例の登録情報です。実際の材料・商品では原材料表示を確認します。</div>
+      <div class="bar-note">※表示は料理例に含まれる主なアレルゲンです。材料や商品によって異なるため、アレルギーがある場合は必ず原材料表示や調理元に確認してください。</div>
     </div>
   </section>
 
@@ -375,7 +375,7 @@
   <img id="guideImg" src="https://tt-sensei.github.io/navi-character-/assets/web/characters/saku/expressions/01-normal-smile.webp" alt="">
   <div>
     <div class="who">さく</div>
-    <div class="line" id="guideLine">4つの おかずを えらんで、<ruby>理想<rt>りそう</rt></ruby>のこんだてを 作ろう！</div>
+    <div class="line" id="guideLine">食べられるものや 家にある食材を組み合わせて、自分のこんだてを考えよう！</div>
   </div>
 </div>
 
@@ -409,6 +409,11 @@ const DISHES = [
   { id:"omurice", cat:"staple", name:"オムライス", em:"🍅", y:3,r:2,g:1, method:"いためる", alg:["卵","乳","鶏肉"] },
   { id:"zaruudon", cat:"staple", name:"ざるうどん", em:"🍜", y:3,r:0,g:0, method:"ゆでる", alg:["小麦"] },
   { id:"melonpan", cat:"staple", name:"メロンパン", em:"🥐", y:3,r:0,g:0, method:"そのまま", alg:["小麦","卵","乳"] },
+  { id:"genmai", cat:"staple", name:"玄米ごはん", em:"🍚", y:3,r:0,g:0, method:"たく", alg:[] },
+  { id:"okayu", cat:"staple", name:"おかゆ", em:"🥣", y:2,r:0,g:0, method:"にる", alg:[] },
+  { id:"yakionigiri", cat:"staple", name:"焼きおにぎり", em:"🍙", y:3,r:0,g:0, method:"やく", alg:["小麦","大豆"] },
+  { id:"peasrice", cat:"staple", name:"グリーンピースごはん", em:"🍚", y:3,r:0,g:1, method:"たく", alg:[] },
+  { id:"inari", cat:"staple", name:"いなりずし", em:"🍣", y:3,r:1,g:0, method:"そのまま", alg:["小麦","大豆"] },
   /* 主菜 */
   { id:"sake", cat:"main", kind:"魚", name:"さけの しおやき", em:"🐟", y:0,r:3,g:0, method:"やく", alg:["さけ"] },
   { id:"karaage", cat:"main", kind:"肉", name:"とりの からあげ", em:"🍗", y:1,r:3,g:0, method:"あげる", alg:["小麦","大豆","鶏肉"] },
@@ -425,6 +430,11 @@ const DISHES = [
   { id:"yasaiitame", cat:"main", kind:"野菜", name:"やさいいため", em:"🥦", y:1,r:0,g:2, method:"いためる", alg:["大豆"] },
   { id:"potatofry", cat:"main", kind:"野菜", name:"ポテトフライ", em:"🍟", y:2,r:0,g:0, method:"あげる", alg:[], potato:true },
   { id:"wiener", cat:"main", kind:"肉", name:"ウインナーソテー", em:"🌭", y:1,r:2,g:0, method:"やく", alg:["豚肉"] },
+  { id:"natto", cat:"main", kind:"卵・豆", name:"なっとう", em:"🫘", y:0,r:2,g:0, method:"そのまま", alg:["大豆"] },
+  { id:"tofusoboro", cat:"main", kind:"卵・豆", name:"とうふのそぼろ", em:"🍲", y:1,r:2,g:1, method:"いためる", alg:["小麦","大豆"] },
+  { id:"salmonfoil", cat:"main", kind:"魚", name:"さけのホイル焼き", em:"🐟", y:0,r:3,g:1, method:"やく", alg:["さけ"] },
+  { id:"chickensteam", cat:"main", kind:"肉", name:"とり肉のむし焼き", em:"🍗", y:0,r:3,g:0, method:"むす", alg:["鶏肉"] },
+  { id:"beanburger", cat:"main", kind:"卵・豆", name:"豆と野菜のハンバーグ", em:"🍔", y:1,r:2,g:1, method:"やく", alg:["小麦","卵"] },
   /* 副菜 */
   { id:"ohitashi", cat:"side", kind:"野菜", name:"ほうれん草の おひたし", em:"🥬", y:0,r:0,g:3, method:"ゆでる", alg:["大豆"] },
   { id:"salad", cat:"side", kind:"野菜", name:"サラダ", em:"🥗", y:0,r:0,g:3, method:"そのまま", alg:[] },
@@ -442,6 +452,11 @@ const DISHES = [
   { id:"banbanji", cat:"side", kind:"肉・魚入り", name:"とりの バンバンジー", em:"🍗", y:0,r:2,g:2, method:"ゆでる", alg:["鶏肉","ごま"] },
   { id:"tsuna", cat:"side", kind:"肉・魚入り", name:"ツナサラダ", em:"🥣", y:0,r:2,g:1, method:"そのまま", alg:["卵"] },
   { id:"macaroni", cat:"side", kind:"いも・粉もの", name:"マカロニサラダ", em:"🍝", y:2,r:1,g:1, method:"ゆでる", alg:["小麦","卵"] },
+  { id:"edamame", cat:"side", kind:"海そう・豆", name:"えだまめ", em:"🫛", y:0,r:1,g:1, method:"ゆでる", alg:["大豆"] },
+  { id:"mushroomsaute", cat:"side", kind:"野菜", name:"きのこのソテー", em:"🍄", y:0,r:0,g:2, method:"いためる", alg:[] },
+  { id:"moyashinamul", cat:"side", kind:"野菜", name:"もやしのナムル", em:"🥗", y:0,r:0,g:2, method:"あえる", alg:["ごま"] },
+  { id:"chickpeasalad", cat:"side", kind:"海そう・豆", name:"ひよこ豆のサラダ", em:"🥗", y:1,r:1,g:2, method:"あえる", alg:[] },
+  { id:"frozenveg", cat:"side", kind:"野菜", name:"冷凍野菜のソテー", em:"🥦", y:0,r:0,g:2, method:"いためる", alg:[] },
   /* 汁もの */
   { id:"wakame", cat:"soup", name:"わかめの みそしる", em:"🍵", y:0,r:1,g:1, method:"にる", alg:["大豆"] },
   { id:"tonjiru", cat:"soup", name:"とんじる", em:"🍲", y:1,r:2,g:2, method:"にる", alg:["豚肉","大豆"] },
@@ -453,7 +468,12 @@ const DISHES = [
   { id:"daikonmiso", cat:"soup", name:"だいこんのみそしる", em:"🍵", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
   { id:"minestrone", cat:"soup", name:"ミネストローネ", em:"🍅", y:2,r:1,g:2, method:"にる", alg:["小麦","豚肉"] },
   { id:"mushroomsoup", cat:"soup", name:"きのこのクリームスープ", em:"🍄", y:2,r:1,g:1, method:"にる", alg:["乳"] },
-  { id:"stew", cat:"soup", name:"クリームシチュー", em:"🫕", y:2,r:2,g:1, method:"にる", alg:["小麦","乳","鶏肉"] }
+  { id:"stew", cat:"soup", name:"クリームシチュー", em:"🫕", y:2,r:2,g:1, method:"にる", alg:["小麦","乳","鶏肉"] },
+  { id:"soymilksoup", cat:"soup", name:"豆乳スープ", em:"🥛", y:1,r:1,g:2, method:"にる", alg:["大豆"] },
+  { id:"mushroommiso", cat:"soup", name:"きのこのみそ汁", em:"🍄", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
+  { id:"beansoup", cat:"soup", name:"豆と野菜のスープ", em:"🥣", y:1,r:1,g:2, method:"にる", alg:[] },
+  { id:"frozenvegetablesoup", cat:"soup", name:"冷凍野菜のスープ", em:"🥣", y:1,r:1,g:2, method:"にる", alg:[] },
+  { id:"instantmiso", cat:"soup", name:"インスタントみそしる", em:"🍵", y:0,r:1,g:1, method:"お湯をそそぐ", alg:["大豆"] }
 ];
 const TOPPINGS = [
   { id:"tp-wakame", name:"わかめ", em:"🌿", y:0,r:0,g:1, alg:[] },
@@ -553,46 +573,40 @@ function judge() {
       checks:[{label:"4つの料理がそろっている",done:false},{label:"3色のはたらきが目安内",done:false},{label:"調理法に変化がある",done:false}] };
   }
   if (missing > 0) msgs.push("あと " + missing + "品 えらぶと、1食分に なるよ。");
-  const fry = dishes.filter(d => d.method === "あげる").length;
-  const potato = dishes.filter(d => d.potato).length;
   const methods = new Set(dishes.map(d => d.method).filter(Boolean));
   let skewed = false;
   GROUPS.forEach(gr => {
     const v = t[gr.key];
     if (v <= 2 && missing === 0) {
       skewed = true;
-      if (gr.key === "g") msgs.push("緑（体のちょうし）が たりないよ。野菜の おかずや、ちょい足しを たしてみよう。");
-      else if (gr.key === "r") msgs.push("赤（体をつくる）が たりないよ。肉・魚・たまご・とうふの おかずを 見てみよう。");
-      else msgs.push("黄（エネルギー）が たりないよ。主食を しっかり えらぼう。");
+      if (gr.key === "g") msgs.push("緑（体のちょうし）の はたらきが 少なめだよ。野菜・きのこ・海そうなど、食べられるものを組み合わせてみよう。");
+      else if (gr.key === "r") msgs.push("赤（体をつくる）の はたらきが 少なめだよ。肉・魚・卵・豆など、選べるものを組み合わせてみよう。");
+      else msgs.push("黄（エネルギー）の はたらきが 少なめだよ。ごはん・パン・めんなど、主食の組み合わせを見てみよう。");
     } else if (v >= 7) {
       skewed = true;
-      msgs.push(gr.name + "が 多めだよ。" + (gr.key === "y" ? "いもや パンが かさなっていないか 見てみよう。" : "おかずを 1品 かえてみよう。"));
+      msgs.push(gr.name + "の はたらきが 多めだよ。ほかの色のはたらきとの組み合わせを見て、全体のバランスを考えてみよう。");
     }
   });
-  if (fry >= 2) { skewed = true; msgs.push("あげものが かさなっているよ。1品を「やく」「にる」に かえてみよう。"); }
-  if (potato >= 2) { skewed = true; msgs.push("いもが かさなっているよ。黄が 多くなりやすいから 気をつけよう。"); }
   const allIn = GROUPS.every(gr => t[gr.key] >= 3 && t[gr.key] <= 6);
   const checks = [
     { label:"主食・主菜・副菜・汁ものがそろっている", done:missing === 0 },
     { label:"黄・赤・緑のはたらきが目安内", done:allIn },
-    { label:"揚げ物が重なっていない", done:fry < 2 },
-    { label:"いも料理が重なっていない", done:potato < 2 },
     { label:"調理法に2種類以上の工夫がある", done:methods.size >= 2, optional:!challengeMode }
   ];
-  if (missing === 0 && allIn && fry < 2 && potato < 2 && (!challengeMode || methods.size >= 2)) {
+  if (missing === 0 && allIn && (!challengeMode || methods.size >= 2)) {
     level = "good";
     const message = methods.size >= 2
-      ? "3色のはたらきがそろい、調理法にも変化があるね。食べる人を考えた献立になっているよ。"
-      : "3色のはたらきはそろったね。調理法をもう1種類取り入れると、さらに工夫できるよ。";
+      ? "3色のはたらきが目安に入り、調理法にも変化があるね。食べる人や場面に合わせて考えられた献立だよ。"
+      : "3色のはたらきが目安に入っているね。調理法も組み合わせると、味や食感に変化が出るよ。";
     return { level, title:"バランス ばっちり！🎉", msgs:[message], t, checks };
   }
   if (missing === 0 && methods.size < 2) {
     if (challengeMode) skewed = true;
-    msgs.push("調理法が1種類にかたよっているよ。「焼く」「煮る」「ゆでる」などを組み合わせてみよう。");
+    msgs.push("調理法に変化をつけると、味や食感のちがいも楽しめるよ。「焼く」「煮る」「ゆでる」などを組み合わせてみよう。");
   }
   if (skewed) level = "skewed";
-  if (msgs.length === 0) msgs.push("いい感じ！ 3色の ポイントを 見ながら、もう少し 工夫してみよう。");
-  return { level, title: level === "skewed" ? "あと少し 工夫できそう" : "作っている とちゅう", msgs: msgs.slice(0,3), t, checks };
+  if (msgs.length === 0) msgs.push("いい感じ！ 3色の はたらきを見ながら、全体の組み合わせを考えてみよう。");
+  return { level, title: level === "skewed" ? "組み合わせを見直してみよう" : "作っている とちゅう", msgs: msgs.slice(0,3), t, checks };
 }
 
 /* ================= render ================= */
@@ -753,11 +767,11 @@ function renderChallengeCard() {
   button.setAttribute("aria-pressed", challengeMode ? "true" : "false");
   if (challengeMode) {
     title.textContent = "バランスこんだてチャレンジ";
-    message.textContent = "主食・主菜・副菜・汁ものをそろえ、黄・赤・緑のはたらきが整う1食分をつくろう。調理法も2種類以上になるように工夫してみよう。";
+    message.textContent = "主食・主菜・副菜・汁ものをそろえ、黄・赤・緑のはたらきを見ながら組み合わせよう。食べられるものや家にある食材は人それぞれ。選べるものの中で、調理法も工夫してみよう。";
     foot.textContent = "ポイントはまだ見えないよ。自分の予想で献立をつくり、「結果を確認！」でチャレンジの達成度を確かめよう。";
   } else {
     title.textContent = "今日の1食をデザインしよう";
-    message.textContent = "主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。";
+    message.textContent = "主食・主菜・副菜・汁ものをそろえ、食べる人のことを考えて組み合わせよう。食べられるものや家にある食材は人それぞれ。選べるものの中で工夫してみよう。";
     foot.textContent = "料理を選んでいる間は、ポイントや評価は見えません。自分の考えで献立を完成させよう。";
   }
 }
