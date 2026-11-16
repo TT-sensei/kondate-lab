@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>こんだてデザイン｜6年 家庭科</title>
+<title>こんだてデザイン｜5・6年 家庭科</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { height:100%; }
@@ -24,10 +24,16 @@
   header .sub { white-space:nowrap; }
   .hbtn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
   .hbtn.challenge.active { background:#2f8b64; border-color:#2f8b64; color:#fff; }
+  .hbtn.points.active { background:#2f8b64; border-color:#2f8b64; color:#fff; }
+  .grid-group { grid-column:1/-1; font-size:14px; font-weight:800; color:#A34E12; background:#FBEBD2; border-radius:9px; padding:4px 10px; }
+  .dish-btn .pts { font-size:13.5px; font-weight:700; letter-spacing:.05em; }
+  .dish-btn .pts .zero { color:#D8CBB2; }
+  .dish-btn .kind { font-size:11px; font-weight:800; color:#8a5a1d; background:#F6E3C2; border-radius:999px; padding:2px 8px; white-space:nowrap; }
+  .dish-btn .subrow { display:flex; align-items:center; gap:8px; margin-top:2px; min-height:20px; }
   header .sub { font-size:13px; color:#8a6d4f; margin-top:2px; }
   header .spacer { flex:1; }
   .hbtn {
-    font-family:inherit; font-size:16px; font-weight:700; cursor:pointer;
+    font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; white-space:nowrap;
     border:2px solid #E8A15C; background:#FFF3E2; color:#A34E12;
     border-radius:999px; padding:9px 18px; min-height:44px;
   }
@@ -190,7 +196,7 @@
 
 <div class="start-screen" id="startScreen">
   <h1>こんだてデザイン</h1>
-  <div class="start-sub">6年 家庭科 ｜ 食べる人を考えた 1食分のこんだて</div>
+  <div class="start-sub">5・6年 家庭科 ｜ 食べる人を考えた 1食分のこんだて</div>
   <img class="hero" src="assets/top-cooking.jpg" alt="家庭科の調理実習で料理をする子どもたち">
   <button class="start-btn" id="btnStart" type="button">はじめる ▶</button>
   <div class="start-note">主食・主菜・副菜・汁ものを そろえて、バランスのよい こんだてを 作ろう</div>
@@ -200,13 +206,14 @@
   <div class="logo">🍚</div>
   <div>
     <h1>こんだてデザイン</h1>
-    <div class="sub">6年 家庭科 ｜ 食べる人を考えた1食分のこんだて</div>
+    <div class="sub">5・6年 家庭科 ｜ 食べる人を考えた1食分のこんだて</div>
   </div>
   <div class="spacer"></div>
   <button class="hbtn challenge" id="btnChallenge" type="button" aria-pressed="false">🎯 バランスチャレンジ</button>
   <button class="hbtn" id="btnRandom" type="button">🎲 おまかせ</button>
   <button class="hbtn" id="btnReset" type="button">↺ リセット</button>
   <button class="hbtn primary" id="btnResult" type="button" disabled>結果を確認！</button>
+  <button class="hbtn points" id="btnPoints" type="button" aria-pressed="false">🙈 かくす</button>
   <button class="hbtn icon" id="btnSound" type="button" aria-label="音のオン・オフ">🔊</button>
 </header>
 
@@ -310,32 +317,40 @@ const DISHES = [
   { id:"takikomi", cat:"staple", name:"たきこみごはん", em:"🍚", y:3,r:1,g:1, method:"たく", alg:["小麦","大豆","鶏肉"] },
   { id:"omurice", cat:"staple", name:"オムライス", em:"🍅", y:3,r:2,g:1, method:"いためる", alg:["卵","乳","鶏肉"] },
   { id:"zaruudon", cat:"staple", name:"ざるうどん", em:"🍜", y:3,r:0,g:0, method:"ゆでる", alg:["小麦"] },
+  { id:"melonpan", cat:"staple", name:"メロンパン", em:"🥐", y:3,r:0,g:0, method:"そのまま", alg:["小麦","卵","乳"] },
   /* 主菜 */
-  { id:"sake", cat:"main", name:"さけの しおやき", em:"🐟", y:0,r:3,g:0, method:"やく", alg:["さけ"] },
-  { id:"karaage", cat:"main", name:"とりの からあげ", em:"🍗", y:1,r:3,g:0, method:"あげる", alg:["小麦","大豆","鶏肉"] },
-  { id:"ebifry", cat:"main", name:"エビフライ", em:"🍤", y:1,r:2,g:0, method:"あげる", alg:["えび","小麦","卵"] },
-  { id:"hamburg", cat:"main", name:"ハンバーグ", em:"🍖", y:1,r:3,g:0, method:"やく", alg:["小麦","卵","乳","牛肉","豚肉"] },
-  { id:"shogayaki", cat:"main", name:"ぶたの しょうがやき", em:"🥩", y:0,r:3,g:0, method:"いためる", alg:["小麦","大豆","豚肉"] },
-  { id:"tamagoyaki", cat:"main", name:"たまごやき", em:"🍳", y:1,r:2,g:0, method:"やく", alg:["卵"] },
-  { id:"gyoza", cat:"main", name:"ぎょうざ", em:"🥟", y:1,r:2,g:1, method:"やく", alg:["小麦","豚肉","大豆"] },
-  { id:"sabamiso", cat:"main", name:"さばのみそに", em:"🐟", y:0,r:3,g:0, method:"にる", alg:["さば","大豆"] },
-  { id:"teriyaki", cat:"main", name:"とりの てりやき", em:"🍗", y:0,r:3,g:0, method:"やく", alg:["鶏肉","小麦","大豆"] },
-  { id:"tofusteak", cat:"main", name:"とうふステーキ", em:"🧈", y:0,r:2,g:1, method:"やく", alg:["大豆"] },
-  { id:"chickenveg", cat:"main", name:"とり肉と野菜の煮物", em:"🍲", y:1,r:3,g:1, method:"にる", alg:["鶏肉","大豆"] },
-  { id:"atsuage", cat:"main", name:"あつあげのそぼろあん", em:"🍲", y:1,r:2,g:1, method:"にる", alg:["大豆","豚肉"] },
+  { id:"sake", cat:"main", kind:"魚", name:"さけの しおやき", em:"🐟", y:0,r:3,g:0, method:"やく", alg:["さけ"] },
+  { id:"karaage", cat:"main", kind:"肉", name:"とりの からあげ", em:"🍗", y:1,r:3,g:0, method:"あげる", alg:["小麦","大豆","鶏肉"] },
+  { id:"ebifry", cat:"main", kind:"魚", name:"エビフライ", em:"🍤", y:1,r:2,g:0, method:"あげる", alg:["えび","小麦","卵"] },
+  { id:"hamburg", cat:"main", kind:"肉", name:"ハンバーグ", em:"🍖", y:1,r:3,g:0, method:"やく", alg:["小麦","卵","乳","牛肉","豚肉"] },
+  { id:"shogayaki", cat:"main", kind:"肉", name:"ぶたの しょうがやき", em:"🥩", y:0,r:3,g:0, method:"いためる", alg:["小麦","大豆","豚肉"] },
+  { id:"tamagoyaki", cat:"main", kind:"卵・豆", name:"たまごやき", em:"🍳", y:1,r:2,g:0, method:"やく", alg:["卵"] },
+  { id:"gyoza", cat:"main", kind:"まぜもの", name:"ぎょうざ", em:"🥟", y:1,r:2,g:1, method:"やく", alg:["小麦","豚肉","大豆"] },
+  { id:"sabamiso", cat:"main", kind:"魚", name:"さばのみそに", em:"🐟", y:0,r:3,g:0, method:"にる", alg:["さば","大豆"] },
+  { id:"teriyaki", cat:"main", kind:"肉", name:"とりの てりやき", em:"🍗", y:0,r:3,g:0, method:"やく", alg:["鶏肉","小麦","大豆"] },
+  { id:"tofusteak", cat:"main", kind:"卵・豆", name:"とうふステーキ", em:"🧈", y:0,r:2,g:1, method:"やく", alg:["大豆"] },
+  { id:"chickenveg", cat:"main", kind:"肉", name:"とり肉と野菜の煮物", em:"🍲", y:1,r:3,g:1, method:"にる", alg:["鶏肉","大豆"] },
+  { id:"atsuage", cat:"main", kind:"卵・豆", name:"あつあげのそぼろあん", em:"🍲", y:1,r:2,g:1, method:"にる", alg:["大豆","豚肉"] },
+  { id:"yasaiitame", cat:"main", kind:"野菜", name:"やさいいため", em:"🥦", y:1,r:0,g:2, method:"いためる", alg:["大豆"] },
+  { id:"potatofry", cat:"main", kind:"野菜", name:"ポテトフライ", em:"🍟", y:2,r:0,g:0, method:"あげる", alg:[], potato:true },
+  { id:"wiener", cat:"main", kind:"肉", name:"ウインナーソテー", em:"🌭", y:1,r:2,g:0, method:"やく", alg:["豚肉"] },
   /* 副菜 */
-  { id:"ohitashi", cat:"side", name:"ほうれん草の おひたし", em:"🥬", y:0,r:0,g:3, method:"ゆでる", alg:["大豆"] },
-  { id:"salad", cat:"side", name:"サラダ", em:"🥗", y:0,r:0,g:3, method:"そのまま", alg:[] },
-  { id:"potesara", cat:"side", name:"ポテトサラダ", em:"🥔", y:2,r:1,g:1, method:"ゆでる", alg:["卵"], potato:true },
-  { id:"kinpira", cat:"side", name:"きんぴらごぼう", em:"🥕", y:1,r:0,g:2, method:"いためる", alg:["ごま","大豆"] },
-  { id:"nikujaga", cat:"side", name:"肉じゃが", em:"🍲", y:2,r:2,g:1, method:"にる", alg:["牛肉","大豆"], potato:true },
-  { id:"hijiki", cat:"side", name:"ひじきの にもの", em:"🫘", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
-  { id:"broccoli", cat:"side", name:"ブロッコリーのおひたし", em:"🥦", y:0,r:0,g:3, method:"ゆでる", alg:[] },
-  { id:"kyuri", cat:"side", name:"きゅうりとわかめの酢の物", em:"🥒", y:0,r:0,g:3, method:"あえる", alg:["ごま"] },
-  { id:"kabocha", cat:"side", name:"かぼちゃの煮物", em:"🎃", y:1,r:0,g:2, method:"にる", alg:[] },
-  { id:"komatsuna", cat:"side", name:"こまつなのごまあえ", em:"🥬", y:0,r:0,g:3, method:"あえる", alg:["ごま"] },
-  { id:"tomato", cat:"side", name:"トマトとレタスのサラダ", em:"🍅", y:0,r:0,g:3, method:"そのまま", alg:[] },
-  { id:"cabbage", cat:"side", name:"キャベツのコールスロー", em:"🥗", y:0,r:0,g:3, method:"あえる", alg:["卵"] },
+  { id:"ohitashi", cat:"side", kind:"野菜", name:"ほうれん草の おひたし", em:"🥬", y:0,r:0,g:3, method:"ゆでる", alg:["大豆"] },
+  { id:"salad", cat:"side", kind:"野菜", name:"サラダ", em:"🥗", y:0,r:0,g:3, method:"そのまま", alg:[] },
+  { id:"potesara", cat:"side", kind:"いも・粉もの", name:"ポテトサラダ", em:"🥔", y:2,r:1,g:1, method:"ゆでる", alg:["卵"], potato:true },
+  { id:"kinpira", cat:"side", kind:"野菜", name:"きんぴらごぼう", em:"🥕", y:1,r:0,g:2, method:"いためる", alg:["ごま","大豆"] },
+  { id:"nikujaga", cat:"side", kind:"いも・粉もの", name:"肉じゃが", em:"🍲", y:2,r:2,g:1, method:"にる", alg:["牛肉","大豆"], potato:true },
+  { id:"hijiki", cat:"side", kind:"海そう・豆", name:"ひじきの にもの", em:"🫘", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
+  { id:"broccoli", cat:"side", kind:"野菜", name:"ブロッコリーのおひたし", em:"🥦", y:0,r:0,g:3, method:"ゆでる", alg:[] },
+  { id:"kyuri", cat:"side", kind:"海そう・豆", name:"きゅうりとわかめの酢の物", em:"🥒", y:0,r:0,g:3, method:"あえる", alg:["ごま"] },
+  { id:"kabocha", cat:"side", kind:"野菜", name:"かぼちゃの煮物", em:"🎃", y:1,r:0,g:2, method:"にる", alg:[] },
+  { id:"komatsuna", cat:"side", kind:"野菜", name:"こまつなのごまあえ", em:"🥬", y:0,r:0,g:3, method:"あえる", alg:["ごま"] },
+  { id:"tomato", cat:"side", kind:"野菜", name:"トマトとレタスのサラダ", em:"🍅", y:0,r:0,g:3, method:"そのまま", alg:[] },
+  { id:"cabbage", cat:"side", kind:"野菜", name:"キャベツのコールスロー", em:"🥗", y:0,r:0,g:3, method:"あえる", alg:["卵"] },
+  { id:"nikuyasai", cat:"side", kind:"肉・魚入り", name:"肉野菜いため", em:"🥘", y:1,r:2,g:2, method:"いためる", alg:["豚肉","大豆"] },
+  { id:"banbanji", cat:"side", kind:"肉・魚入り", name:"とりの サラダ（ぼうぼうどり）", em:"🍗", y:0,r:2,g:2, method:"ゆでる", alg:["鶏肉","ごま"] },
+  { id:"tsuna", cat:"side", kind:"肉・魚入り", name:"ツナサラダ", em:"🥣", y:0,r:2,g:1, method:"そのまま", alg:["卵"] },
+  { id:"macaroni", cat:"side", kind:"いも・粉もの", name:"マカロニサラダ", em:"🍝", y:2,r:1,g:1, method:"ゆでる", alg:["小麦","卵"] },
   /* 汁もの */
   { id:"wakame", cat:"soup", name:"わかめの みそしる", em:"🍵", y:0,r:1,g:1, method:"にる", alg:["大豆"] },
   { id:"tonjiru", cat:"soup", name:"とんじる", em:"🍲", y:1,r:2,g:2, method:"にる", alg:["豚肉","大豆"] },
@@ -346,7 +361,8 @@ const DISHES = [
   { id:"yasaisoup", cat:"soup", name:"やさいスープ", em:"🥣", y:1,r:1,g:2, method:"にる", alg:["鶏肉"] },
   { id:"daikonmiso", cat:"soup", name:"だいこんのみそしる", em:"🍵", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
   { id:"minestrone", cat:"soup", name:"ミネストローネ", em:"🍅", y:2,r:1,g:2, method:"にる", alg:["小麦","豚肉"] },
-  { id:"mushroomsoup", cat:"soup", name:"きのこのクリームスープ", em:"🍄", y:2,r:1,g:1, method:"にる", alg:["乳"] }
+  { id:"mushroomsoup", cat:"soup", name:"きのこのクリームスープ", em:"🍄", y:2,r:1,g:1, method:"にる", alg:["乳"] },
+  { id:"stew", cat:"soup", name:"クリームシチュー", em:"🫕", y:2,r:2,g:1, method:"にる", alg:["小麦","乳","鶏肉"] }
 ];
 const TOPPINGS = [
   { id:"tp-wakame", name:"わかめ", em:"🌿", y:0,r:0,g:1, alg:[] },
@@ -372,6 +388,7 @@ let state = { staple:null, main:null, side:null, soup:null, toppings:[] };
 let activeTab = "staple";
 let soundOn = true;
 let challengeMode = false;
+let showPoints = false;
 let evaluated = false;
 try {
   const saved = JSON.parse(localStorage.getItem(MENU_KEY) || "null");
@@ -381,11 +398,12 @@ try {
   }
   const set = JSON.parse(localStorage.getItem(SET_KEY) || "null");
   if (set && typeof set.sound === "boolean") soundOn = set.sound;
+  if (set && typeof set.showPoints === "boolean") showPoints = set.showPoints;
 } catch(e) {}
 function save() {
   try {
     localStorage.setItem(MENU_KEY, JSON.stringify(state));
-    localStorage.setItem(SET_KEY, JSON.stringify({ sound: soundOn }));
+    localStorage.setItem(SET_KEY, JSON.stringify({ sound: soundOn, showPoints: showPoints }));
   } catch(e) {}
 }
 
@@ -514,6 +532,14 @@ function renderTabs() {
     tabsEl.appendChild(b);
   });
 }
+function pointsVisible() { return showPoints && !challengeMode; }
+function ptsHtml(d) {
+  const one = (gr) => {
+    const v = d[gr.key];
+    return "<span class='" + (v === 0 ? "zero" : "") + "' style='" + (v > 0 ? "color:" + gr.color : "") + "'>" + gr.shape + v + "</span>";
+  };
+  return GROUPS.map(one).join(" ");
+}
 function dishButton(d, selected, onClick) {
   const b = document.createElement("button");
   b.type = "button";
@@ -523,8 +549,12 @@ function dishButton(d, selected, onClick) {
   const meta = [];
   if (d.method) meta.push("調理法： " + d.method);
   if (d.alg && d.alg.length) meta.push("主なアレルゲン例： " + d.alg.join("・"));
+  const sub = [];
+  if (d.kind) sub.push("<span class='kind'>" + d.kind + "</span>");
+  if (pointsVisible()) sub.push("<span class='pts'>" + ptsHtml(d) + "</span>");
   b.innerHTML =
     "<div class='top'><span class='em'>" + d.em + "</span><span class='nm'>" + d.name + "</span><span class='check'>✔</span></div>" +
+    (sub.length ? "<div class='subrow'>" + sub.join("") + "</div>" : "") +
     (meta.length ? "<div class='meta'>" + meta.join("<br>") + "</div>" : "");
   b.addEventListener("click", onClick);
   return b;
@@ -541,10 +571,27 @@ function renderGrid() {
   }
   const cat = CATS.find(c => c.id === activeTab);
   gridHead.textContent = cat.label + "を えらぼう（もう一度 おすと はずれるよ）";
-  DISHES.filter(d => d.cat === activeTab).forEach(d => {
+  const list = DISHES.filter(d => d.cat === activeTab);
+  const KIND_ORDER = { main:["魚","肉","卵・豆","野菜","まぜもの"], side:["野菜","いも・粉もの","肉・魚入り","海そう・豆"] };
+  const KIND_EM = { "魚":"🐟", "肉":"🍖", "卵・豆":"🥚", "野菜":"🥬", "まぜもの":"🍱", "いも・粉もの":"🥔", "肉・魚入り":"🍗", "海そう・豆":"🌿" };
+  const appendDish = (d) => {
     const sel = state[activeTab] === d.id;
     gridEl.appendChild(dishButton(d, sel, () => selectDish(activeTab, d.id)));
-  });
+  };
+  if (KIND_ORDER[activeTab]) {
+    KIND_ORDER[activeTab].forEach(kind => {
+      const items = list.filter(d => d.kind === kind);
+      if (!items.length) return;
+      const h = document.createElement("div");
+      h.className = "grid-group";
+      h.textContent = (KIND_EM[kind] || "") + " " + kind + "のおかず";
+      gridEl.appendChild(h);
+      items.forEach(appendDish);
+    });
+    list.filter(d => !d.kind).forEach(appendDish);
+  } else {
+    list.forEach(appendDish);
+  }
 }
 function renderTray() {
   CATS.forEach(c => {
@@ -585,6 +632,7 @@ function renderJudge(j) {
 }
 let wasGood = false;
 function renderChallengeCard() {
+  if (typeof paintPoints === "function") paintPoints();
   const title = document.getElementById("challengeTitle");
   const message = document.getElementById("challengeText");
   const foot = document.getElementById("challengeFoot");
@@ -610,11 +658,13 @@ function renderAll(updateGuide) {
   const challengeCard = document.getElementById("challengeCard");
   const balanceCard = document.getElementById("balanceCard");
   const judgeCard = document.getElementById("judgeCard");
-  challengeCard.classList.toggle("is-hidden", evaluated);
-  balanceCard.classList.toggle("is-hidden", !evaluated);
+  const pv = pointsVisible();
+  challengeCard.classList.toggle("is-hidden", evaluated || pv);
+  balanceCard.classList.toggle("is-hidden", !(evaluated || pv));
   judgeCard.classList.toggle("is-hidden", !evaluated);
   renderChallengeCard();
 
+  if (!evaluated && pv) { renderBars(totals()); }
   if (evaluated) {
     const j = judge();
     renderBars(j.t);
@@ -639,7 +689,7 @@ function renderAll(updateGuide) {
       if (challengeMode) {
         guideSay(selectedCount ? "いいね！4つの料理をそろえて、完成したら結果を確かめよう。" : "バランスこんだてチャレンジ！自分の考えで組み立てよう。", selectedCount ? "02-happy" : "01-normal-smile");
       } else {
-        guideSay(selectedCount ? "いい組み合わせかな？食べる人のことを考えて選ぼう。" : "主食・主菜・副菜・汁ものを選んで、1食分をつくろう！", "01-normal-smile");
+        guideSay(pv ? (selectedCount ? "ポイントを見ながら、3色をそろえてみよう。" : "ポイントを見ながら作るよ。3色をそろえてみよう！") : (selectedCount ? "いい組み合わせかな？食べる人のことを考えて選ぼう。" : "主食・主菜・副菜・汁ものを選んで、1食分をつくろう！"), (pv && selectedCount) ? "02-happy" : "01-normal-smile");
       }
     }
   }
@@ -700,6 +750,20 @@ const btnSound = document.getElementById("btnSound");
 function paintSound() { btnSound.textContent = soundOn ? "🔊" : "🔇"; }
 btnSound.addEventListener("click", () => { soundOn = !soundOn; paintSound(); save(); if (soundOn) play("click"); });
 paintSound();
+const btnPoints = document.getElementById("btnPoints");
+function paintPoints() {
+  btnPoints.textContent = showPoints ? "👀 見ながら" : "🙈 かくす";
+  btnPoints.classList.toggle("active", showPoints && !challengeMode);
+  btnPoints.setAttribute("aria-pressed", showPoints ? "true" : "false");
+}
+btnPoints.addEventListener("click", () => {
+  if (challengeMode) { guideSay("チャレンジ中は ポイントを かくすよ。", "05-surprised"); return; }
+  showPoints = !showPoints;
+  paintPoints();
+  play("click");
+  renderAll(true);
+});
+paintPoints();
 document.getElementById("btnStart").addEventListener("click", () => {
   document.getElementById("startScreen").classList.add("hidden");
   play("start");
