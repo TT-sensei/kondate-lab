@@ -74,6 +74,40 @@
     position:absolute; left:50%; bottom:8px; transform:translateX(-50%);
     font-size:19px; color:#8a6d4f; letter-spacing:.35em; white-space:nowrap;
   }
+  .tray-toppings {
+    position:absolute; left:50%; top:47%; transform:translate(-50%,-50%);
+    width:142px; display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+    gap:4px; pointer-events:none; z-index:2;
+  }
+  .tray-toppings:empty { display:none; }
+  .tray-topping {
+    display:inline-flex; align-items:center; gap:3px; max-width:100%;
+    padding:3px 6px; border:1px solid #DFA75E; border-radius:999px;
+    background:rgba(255,255,255,.94); color:#6d4c26;
+    font-size:11px; font-weight:800; line-height:1.2; white-space:nowrap;
+    box-shadow:0 1px 3px rgba(100,65,25,.12);
+  }
+  .tray-topping-label {
+    flex-basis:100%; text-align:center; color:#8a5a1d;
+    font-size:10px; font-weight:800; text-shadow:0 1px 2px #fff;
+  }
+  .tray.effect-confetti { isolation:isolate; }
+  .tray .effect-confetti-piece {
+    position:absolute; z-index:8; left:50%; top:38%;
+    width:8px; height:12px; border-radius:2px;
+    background:var(--confetti-color); opacity:0;
+    pointer-events:none; transform:translate(-50%,-50%);
+    animation:kondate-confetti 950ms cubic-bezier(.15,.7,.25,1) var(--confetti-delay) forwards;
+  }
+  @keyframes kondate-confetti {
+    0% { opacity:0; transform:translate(-50%,-50%) rotate(0deg) scale(.7); }
+    12% { opacity:1; }
+    100% { opacity:0; transform:translate(calc(-50% + var(--confetti-x)),calc(-50% + var(--confetti-y))) rotate(540deg) scale(.9); }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .tray .effect-confetti-piece { animation:none; display:none; }
+    .bar-fill { transition:none; }
+  }
 
   /* ===== balance bars ===== */
   .bar-row { display:flex; align-items:center; gap:9px; margin:7px 0; }
@@ -159,6 +193,62 @@
     .left { width:350px; flex-basis:350px; }
     .grid { grid-template-columns:repeat(3,1fr); }
   }
+  /* Tablet portrait and narrow screens: switch to a scrollable single column. */
+  @media (max-width:820px) {
+    html, body { min-height:100%; height:auto; }
+    body { min-height:100vh; height:auto; overflow-x:hidden; overflow-y:auto; }
+    header { height:auto; min-height:64px; flex:0 0 auto; flex-wrap:wrap; padding:10px 12px; }
+    header .spacer { display:none; }
+    header h1 { font-size:20px; }
+    header .sub { white-space:normal; }
+    .hbtn { flex:0 1 auto; min-height:42px; }
+    main { flex:0 0 auto; flex-direction:column; padding:10px; }
+    .left { width:auto; flex:0 0 auto; }
+    .right { flex:0 0 auto; min-height:440px; }
+    .grid-card { min-height:340px; }
+    .grid { max-height:52vh; grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .judge-card { min-height:210px; }
+    .guide { position:static; width:calc(100% - 20px); max-width:420px; margin:0 10px 12px auto; }
+  }
+  @media (max-width:540px) {
+    header { gap:7px; padding:9px; }
+    header .logo { font-size:25px; }
+    header h1 { font-size:18px; }
+    header .sub { font-size:10.5px; }
+    .hbtn { flex:1 1 calc(33.333% - 8px); padding:7px 6px; font-size:12px; }
+    .hbtn.primary { flex-basis:calc(40% - 8px); }
+    main { padding:8px; gap:9px; }
+    .card { padding:10px; border-radius:14px; }
+    .tray { height:220px; }
+    .bowl.big { width:88px; height:88px; }
+    .bowl.mid { width:78px; height:78px; }
+    .bowl.sml { width:74px; height:74px; }
+    .bowl .em { font-size:29px; }
+    .bowl .nm { font-size:10px; }
+    #pos-staple { left:9px; bottom:25px; }
+    #pos-soup { right:9px; bottom:25px; }
+    #pos-main { right:14px; top:8px; }
+    #pos-side { left:14px; top:8px; }
+    .hashi { font-size:15px; bottom:7px; }
+    .tray-toppings { width:116px; top:48%; gap:3px; }
+    .tray-topping { font-size:10px; padding:3px 5px; }
+    .slots { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    .slot { min-height:68px; padding:7px 9px; }
+    .slot .dish { font-size:14px; }
+    .tabs { flex-wrap:wrap; gap:6px; }
+    .tab { flex:1 1 calc(20% - 6px); min-height:44px; font-size:14px; }
+    .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; max-height:55vh; }
+    .dish-btn { min-height:94px; padding:7px; border-radius:12px; }
+    .dish-btn .em { font-size:26px; }
+    .dish-btn .nm { font-size:14px; }
+    .dish-btn .meta { font-size:10px; }
+    .bar-label { width:128px; flex-basis:128px; font-size:13px; }
+    .bar-num { font-size:16px; }
+    .result-checks { grid-template-columns:1fr; }
+    .guide { width:calc(100% - 16px); margin:0 8px 10px; padding:7px 9px; }
+    .guide img { width:48px; height:48px; flex-basis:48px; }
+    .guide .line { font-size:12.5px; }
+  }
   .guide {
     position:fixed; right:16px; bottom:14px; width:308px; z-index:5;
     display:flex; gap:10px; align-items:flex-start; pointer-events:none;
@@ -226,6 +316,7 @@
         <div class="bowl mid empty" id="pos-main"><span class="nm"><ruby>主菜<rt>しゅさい</rt></ruby></span></div>
         <div class="bowl big empty" id="pos-staple"><span class="nm"><ruby>主食<rt>しゅしょく</rt></ruby></span></div>
         <div class="bowl sml empty" id="pos-soup"><span class="nm"><ruby>汁<rt>しる</rt></ruby>もの</span></div>
+        <div class="tray-toppings" id="trayToppings" aria-label="ちょい足し食材"></div>
         <div class="hashi">🥢 おはし</div>
       </div>
     </div>
@@ -348,7 +439,7 @@ const DISHES = [
   { id:"tomato", cat:"side", kind:"野菜", name:"トマトとレタスのサラダ", em:"🍅", y:0,r:0,g:3, method:"そのまま", alg:[] },
   { id:"cabbage", cat:"side", kind:"野菜", name:"キャベツのコールスロー", em:"🥗", y:0,r:0,g:3, method:"あえる", alg:["卵"] },
   { id:"nikuyasai", cat:"side", kind:"肉・魚入り", name:"肉野菜いため", em:"🥘", y:1,r:2,g:2, method:"いためる", alg:["豚肉","大豆"] },
-  { id:"banbanji", cat:"side", kind:"肉・魚入り", name:"とりの サラダ（ぼうぼうどり）", em:"🍗", y:0,r:2,g:2, method:"ゆでる", alg:["鶏肉","ごま"] },
+  { id:"banbanji", cat:"side", kind:"肉・魚入り", name:"とりの バンバンジー", em:"🍗", y:0,r:2,g:2, method:"ゆでる", alg:["鶏肉","ごま"] },
   { id:"tsuna", cat:"side", kind:"肉・魚入り", name:"ツナサラダ", em:"🥣", y:0,r:2,g:1, method:"そのまま", alg:["卵"] },
   { id:"macaroni", cat:"side", kind:"いも・粉もの", name:"マカロニサラダ", em:"🍝", y:2,r:1,g:1, method:"ゆでる", alg:["小麦","卵"] },
   /* 汁もの */
@@ -393,8 +484,13 @@ let evaluated = false;
 try {
   const saved = JSON.parse(localStorage.getItem(MENU_KEY) || "null");
   if (saved && typeof saved === "object") {
-    CATS.forEach(c => { if (saved[c.id] && byId[saved[c.id]]) state[c.id] = saved[c.id]; });
-    if (Array.isArray(saved.toppings)) state.toppings = saved.toppings.filter(id => byId[id]).slice(0,3);
+    CATS.forEach(c => {
+      const dish = byId[saved[c.id]];
+      if (dish && dish.cat === c.id) state[c.id] = saved[c.id];
+    });
+    if (Array.isArray(saved.toppings)) {
+      state.toppings = Array.from(new Set(saved.toppings.filter(id => TOPPINGS.some(d => d.id === id)))).slice(0,3);
+    }
   }
   const set = JSON.parse(localStorage.getItem(SET_KEY) || "null");
   if (set && typeof set.sound === "boolean") soundOn = set.sound;
@@ -602,6 +698,22 @@ function renderTray() {
       ? "<span class='em'>" + d.em + "</span><span class='nm'>" + d.name + "</span>"
       : "<span class='nm'>" + rubyLabel(c) + "</span>";
   });
+  const toppingTray = document.getElementById("trayToppings");
+  toppingTray.innerHTML = "";
+  if (state.toppings.length) {
+    const label = document.createElement("span");
+    label.className = "tray-topping-label";
+    label.textContent = "ちょい足し";
+    toppingTray.appendChild(label);
+    state.toppings.forEach(id => {
+      const d = TOPPINGS.find(item => item.id === id);
+      if (!d) return;
+      const chip = document.createElement("span");
+      chip.className = "tray-topping";
+      chip.textContent = d.em + " " + d.name;
+      toppingTray.appendChild(chip);
+    });
+  }
 }
 function renderBars(t) {
   const set = (id, numId, v) => {
