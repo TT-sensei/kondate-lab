@@ -128,7 +128,7 @@
   /* ===== dish grid ===== */
   .grid-card { flex:1; display:flex; flex-direction:column; min-height:0; }
   .grid-head { font-size:13.5px; color:#8a6d4f; margin-bottom:8px; }
-  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-content:start; overflow-y:auto; overflow-x:hidden; padding:0 4px 4px 0; scrollbar-width:thin; }
+  .grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-content:start; overflow-y:auto; overflow-x:hidden; padding:0 4px 4px 0; scrollbar-width:thin; }
   .dish-btn {
     font-family:inherit; cursor:pointer; text-align:left; min-height:106px;
     background:#FFFCF6; border:2.5px solid #EAD9BC; border-radius:16px; padding:9px 11px;
@@ -290,7 +290,7 @@ const DISHES = [
   { id:"gyoza", cat:"main", name:"ぎょうざ", em:"🥟", y:1,r:2,g:1, method:"やく", alg:["小麦","豚肉","大豆"] },
   { id:"sabamiso", cat:"main", name:"さばのみそに", em:"🐟", y:0,r:3,g:0, method:"にる", alg:["さば","大豆"] },
   { id:"teriyaki", cat:"main", name:"とりの てりやき", em:"🍗", y:0,r:3,g:0, method:"やく", alg:["鶏肉","小麦","大豆"] },
-  { id:"tofust steak", cat:"main", name:"とうふステーキ", em:"🧈", y:0,r:2,g:1, method:"やく", alg:["大豆"] },
+  { id:"tofusteak", cat:"main", name:"とうふステーキ", em:"🧈", y:0,r:2,g:1, method:"やく", alg:["大豆"] },
   { id:"chickenveg", cat:"main", name:"とり肉と野菜の煮物", em:"🍲", y:1,r:3,g:1, method:"にる", alg:["鶏肉","大豆"] },
   { id:"atsuage", cat:"main", name:"あつあげのそぼろあん", em:"🍲", y:1,r:2,g:1, method:"にる", alg:["大豆","豚肉"] },
   /* 副菜 */
@@ -433,9 +433,9 @@ function judge() {
     { label:"黄・赤・緑のはたらきが目安内", done:allIn },
     { label:"揚げ物が重なっていない", done:fry < 2 },
     { label:"いも料理が重なっていない", done:potato < 2 },
-    { label:"調理法に2種類以上の工夫がある", done:methods.size >= 2, optional:true }
+    { label:"調理法に2種類以上の工夫がある", done:methods.size >= 2, optional:!challengeMode }
   ];
-  if (missing === 0 && allIn && fry < 2 && potato < 2) {
+  if (missing === 0 && allIn && fry < 2 && potato < 2 && (!challengeMode || methods.size >= 2)) {
     level = "good";
     const message = methods.size >= 2
       ? "3色のはたらきがそろい、調理法にも変化があるね。食べる人を考えた献立になっているよ。"
@@ -443,6 +443,7 @@ function judge() {
     return { level, title:"バランス ばっちり！🎉", msgs:[message], t, checks };
   }
   if (missing === 0 && methods.size < 2) {
+    if (challengeMode) skewed = true;
     msgs.push("調理法が1種類にかたよっているよ。「焼く」「煮る」「ゆでる」などを組み合わせてみよう。");
   }
   if (skewed) level = "skewed";
@@ -498,7 +499,7 @@ function dishButton(d, selected, onClick) {
   b.dataset.dishId = d.id;
   const meta = [];
   if (d.method) meta.push("調理法： " + d.method);
-  if (d.alg && d.alg.length) meta.push("アレルギー： " + d.alg.join("・"));
+  if (d.alg && d.alg.length) meta.push("主なアレルゲン例： " + d.alg.join("・"));
   b.innerHTML =
     "<div class='top'><span class='em'>" + d.em + "</span><span class='nm'>" + d.name + "</span><span class='check'>✔</span></div>" +
     (meta.length ? "<div class='meta'>" + meta.join("<br>") + "</div>" : "");
@@ -569,7 +570,7 @@ function renderChallengeCard() {
   button.setAttribute("aria-pressed", challengeMode ? "true" : "false");
   if (challengeMode) {
     title.textContent = "バランスこんだてチャレンジ";
-    message.textContent = "主食・主菜・副菜・汁ものをそろえ、黄・赤・緑のはたらきが整う1食分をつくろう。料理を選ぶときは、食材や調理法の組み合わせも考えてみよう。";
+    message.textContent = "主食・主菜・副菜・汁ものをそろえ、黄・赤・緑のはたらきが整う1食分をつくろう。調理法も2種類以上になるように工夫してみよう。";
     foot.textContent = "ポイントはまだ見えないよ。自分の予想で献立をつくり、「結果を確認！」でチャレンジの達成度を確かめよう。";
   } else {
     title.textContent = "今日の1食をデザインしよう";
