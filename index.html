@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>こんだてラボ｜理想のこんだてづくり</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; }
+  body {
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic",Meiryo,sans-serif;
+    background:#FFF6E9; color:#3a2e22; overflow:hidden;
+    display:flex; flex-direction:column; height:100vh;
+  }
+  ruby rt { font-size:.52em; color:#8a6d4f; }
+
+  /* ===== header ===== */
+  header {
+    height:64px; flex:0 0 64px; display:flex; align-items:center; gap:14px;
+    padding:0 18px; background:#fff; border-bottom:3px solid #F3D9B8;
+  }
+  header .logo { font-size:30px; }
+  header h1 { font-size:25px; letter-spacing:.04em; color:#C85A1E; }
+  header .sub { font-size:13px; color:#8a6d4f; margin-top:2px; }
+  header .spacer { flex:1; }
+  .hbtn {
+    font-family:inherit; font-size:16px; font-weight:700; cursor:pointer;
+    border:2px solid #E8A15C; background:#FFF3E2; color:#A34E12;
+    border-radius:999px; padding:9px 18px; min-height:44px;
+  }
+  .hbtn:active { transform:scale(.97); }
+  .hbtn.primary { background:#F08A2E; border-color:#F08A2E; color:#fff; }
+  .hbtn.icon { padding:9px 13px; }
+
+  /* ===== layout ===== */
+  main { flex:1; display:flex; gap:14px; padding:14px 16px 16px; min-height:0; }
+  .left { width:398px; flex:0 0 398px; display:flex; flex-direction:column; gap:12px; min-height:0; }
+  .right { flex:1; display:flex; flex-direction:column; gap:10px; min-width:0; min-height:0; }
+  .card { background:#fff; border-radius:18px; box-shadow:0 2px 8px rgba(160,100,30,.10); padding:12px 14px; }
+  .card h2 { font-size:16px; color:#A34E12; margin-bottom:8px; letter-spacing:.03em; }
+
+  /* ===== tray (お膳) ===== */
+  .tray {
+    position:relative; height:238px; border-radius:16px;
+    background:linear-gradient(180deg,#F8E3BC,#F3D5A0);
+    border:3px solid #DFA75E; overflow:hidden;
+  }
+  .bowl {
+    position:absolute; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:#fff; border:3px solid #E4B273; border-radius:50%;
+    box-shadow:0 2px 5px rgba(150,95,25,.18);
+  }
+  .bowl .em { font-size:35px; line-height:1.05; }
+  .bowl .nm { font-size:11px; font-weight:700; color:#6d4c26; text-align:center; padding:0 4px; line-height:1.15; }
+  .bowl.empty { background:rgba(255,255,255,.45); border-style:dashed; box-shadow:none; }
+  .bowl.empty .nm { color:#a07c46; font-size:12.5px; }
+  .bowl.big { width:108px; height:108px; }
+  .bowl.mid { width:96px; height:96px; }
+  .bowl.sml { width:92px; height:92px; }
+  #pos-staple { left:18px; bottom:22px; }
+  #pos-soup   { right:18px; bottom:22px; }
+  #pos-main   { right:28px; top:8px; }
+  #pos-side   { left:28px; top:8px; }
+  .hashi {
+    position:absolute; left:50%; bottom:8px; transform:translateX(-50%);
+    font-size:19px; color:#8a6d4f; letter-spacing:.35em; white-space:nowrap;
+  }
+
+  /* ===== balance bars ===== */
+  .bar-row { display:flex; align-items:center; gap:9px; margin:7px 0; }
+  .bar-label { width:158px; flex:0 0 158px; font-size:14.5px; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .bar-label .shape { font-size:17px; }
+  .bar-label small { display:block; font-size:11px; font-weight:400; color:#8a6d4f; }
+  .bar-track {
+    flex:1; height:24px; border-radius:12px; position:relative; overflow:hidden;
+    background:linear-gradient(90deg,#F6E8D2 0%,#F6E8D2 33.3%,#DFF3E4 33.3%,#DFF3E4 66.6%,#F6E8D2 66.6%,#F6E8D2 100%);
+    border:1.5px solid #E2C491;
+  }
+  .bar-fill { height:100%; width:0%; border-radius:12px; transition:width .45s ease; opacity:.92; }
+  .bar-num { width:30px; flex:0 0 30px; font-size:19px; font-weight:800; text-align:right; }
+  .bar-note { font-size:11.5px; color:#8a6d4f; margin-top:2px; }
+
+  /* ===== judge ===== */
+  .judge-card { flex:1; display:flex; flex-direction:column; min-height:0; }
+  .judge-title { font-size:19px; font-weight:800; margin-bottom:6px; }
+  .judge-title.good { color:#1d9e6a; }
+  .judge-title.warn { color:#d2691e; }
+  .judge-list { font-size:14px; line-height:1.5; overflow:hidden; padding-bottom:4px; }
+  .judge-list li { margin-left:1.2em; margin-bottom:3px; }
+  .allergen-line { margin-top:auto; flex:0 0 auto; padding-top:7px; font-size:12.5px; color:#7a6a55; border-top:1.5px dashed #EAD9BC; }
+
+  /* ===== slots ===== */
+  .slots { display:flex; gap:10px; }
+  .slot {
+    flex:1; font-family:inherit; text-align:left; cursor:pointer; min-height:78px;
+    background:#fff; border:3px solid #EAD9BC; border-radius:16px; padding:8px 12px;
+  }
+  .slot .cat { font-size:13px; font-weight:700; color:#A34E12; }
+  .slot .dish { font-size:16.5px; font-weight:800; margin-top:2px; line-height:1.25; }
+  .slot .dish.none { color:#b9a888; font-weight:400; font-size:14.5px; }
+  .slot.filled { border-color:#F08A2E; background:#FFF9F0; }
+  .slot.active { box-shadow:0 0 0 3px #F6C177; }
+
+  /* ===== tabs ===== */
+  .tabs { display:flex; gap:8px; }
+  .tab {
+    flex:1; font-family:inherit; font-size:17px; font-weight:800; cursor:pointer; min-height:48px;
+    border-radius:14px; border:2.5px solid #EAD9BC; background:#fff; color:#6d4c26; padding:4px 2px;
+  }
+  .tab.active { background:#F08A2E; border-color:#F08A2E; color:#fff; }
+  .tab.active rt { color:#FFE3C2; }
+
+  /* ===== dish grid ===== */
+  .grid-card { flex:1; display:flex; flex-direction:column; min-height:0; }
+  .grid-head { font-size:13.5px; color:#8a6d4f; margin-bottom:8px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; align-content:start; overflow:hidden; }
+  .dish-btn {
+    font-family:inherit; cursor:pointer; text-align:left; min-height:118px;
+    background:#FFFCF6; border:2.5px solid #EAD9BC; border-radius:16px; padding:9px 11px;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .dish-btn:active { transform:scale(.98); }
+  .dish-btn.selected { border-color:#1d9e6a; background:#EFFAF3; box-shadow:0 0 0 2.5px #9ADBB8 inset; }
+  .dish-btn .top { display:flex; align-items:center; gap:8px; }
+  .dish-btn .em { font-size:31px; }
+  .dish-btn .nm { font-size:16.5px; font-weight:800; line-height:1.2; }
+  .dish-btn .pts { font-size:13.5px; font-weight:700; letter-spacing:.06em; }
+  .dish-btn .pts .zero { color:#D8CBB2; }
+  .dish-btn .meta { font-size:11px; color:#96835f; line-height:1.3; }
+  .dish-btn .check { margin-left:auto; font-size:19px; color:#1d9e6a; visibility:hidden; }
+  .dish-btn.selected .check { visibility:visible; }
+
+  /* ===== navi guide ===== */
+  .guide {
+    position:fixed; right:16px; bottom:14px; width:308px; z-index:5;
+    display:flex; gap:10px; align-items:flex-start; pointer-events:none;
+    background:rgba(255,255,255,.96); border:2.5px solid #BFE3CC; border-radius:16px;
+    padding:9px 12px; box-shadow:0 3px 10px rgba(90,130,90,.15);
+  }
+  .guide img { width:62px; height:62px; object-fit:contain; flex:0 0 62px; }
+  .guide .who { font-size:11.5px; font-weight:800; color:#2e8b57; }
+  .guide .line { font-size:14px; line-height:1.45; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🍚</div>
+  <div>
+    <h1>こんだてラボ</h1>
+    <div class="sub">5・6年 家庭科 ｜ <ruby>理想<rt>りそう</rt></ruby>のこんだてづくり</div>
+  </div>
+  <div class="spacer"></div>
+  <button class="hbtn" id="btnRandom" type="button">🎲 おまかせ ランダム</button>
+  <button class="hbtn" id="btnReset" type="button">↺ さいしょから</button>
+  <button class="hbtn icon" id="btnSound" type="button" aria-label="音のオン・オフ">🔊</button>
+</header>
+
+<main>
+  <section class="left">
+    <div class="card">
+      <h2>お<ruby>膳<rt>ぜん</rt></ruby>に ならべてみよう</h2>
+      <div class="tray" id="tray">
+        <div class="bowl mid empty" id="pos-side"><span class="nm"><ruby>副菜<rt>ふくさい</rt></ruby></span></div>
+        <div class="bowl mid empty" id="pos-main"><span class="nm"><ruby>主菜<rt>しゅさい</rt></ruby></span></div>
+        <div class="bowl big empty" id="pos-staple"><span class="nm"><ruby>主食<rt>しゅしょく</rt></ruby></span></div>
+        <div class="bowl sml empty" id="pos-soup"><span class="nm"><ruby>汁<rt>しる</rt></ruby>もの</span></div>
+        <div class="hashi">🥢 おはし</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3色の はたらきポイント</h2>
+      <div class="bar-row">
+        <div class="bar-label"><span class="shape" style="color:#F6AA00">★</span><span>黄<small>エネルギーのもと</small></span></div>
+        <div class="bar-track"><div class="bar-fill" id="barY" style="background:#F6AA00"></div></div>
+        <div class="bar-num" id="numY">0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="shape" style="color:#FF4B00">●</span><span>赤<small>体をつくるもと</small></span></div>
+        <div class="bar-track"><div class="bar-fill" id="barR" style="background:#FF4B00"></div></div>
+        <div class="bar-num" id="numR">0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="shape" style="color:#03AF7A">■</span><span>緑<small>体のちょうしを ととのえる</small></span></div>
+        <div class="bar-track"><div class="bar-fill" id="barG" style="background:#03AF7A"></div></div>
+        <div class="bar-num" id="numG">0</div>
+      </div>
+      <div class="bar-note">うすい緑の ゾーン（3〜6）が バランスの めやすだよ</div>
+    </div>
+
+    <div class="card judge-card">
+      <div class="judge-title" id="judgeTitle">こんだてを 作ってみよう</div>
+      <ul class="judge-list" id="judgeList"></ul>
+      <div class="allergen-line" id="allergenLine">アレルギー<ruby>表示<rt>ひょうじ</rt></ruby>： まだ えらばれていません</div>
+    </div>
+  </section>
+
+  <section class="right">
+    <div class="slots" id="slots"></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="card grid-card">
+      <div class="grid-head" id="gridHead"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+</main>
+
+<div class="guide" id="guide">
+  <img id="guideImg" src="https://tt-sensei.github.io/navi-character-/assets/web/characters/saku/expressions/01-normal-smile.webp" alt="">
+  <div>
+    <div class="who">さく</div>
+    <div class="line" id="guideLine">4つの おかずを えらんで、<ruby>理想<rt>りそう</rt></ruby>のこんだてを 作ろう！</div>
+  </div>
+</div>
+
+<script src="https://tt-sensei.github.io/edu-effects/js/edu-effects.js"></script>
+<script>
+"use strict";
+/* ================= data ================= */
+const CATS = [
+  { id:"staple", label:"主食", ruby:"しゅしょく", tray:"pos-staple", size:"big" },
+  { id:"main",   label:"主菜", ruby:"しゅさい",   tray:"pos-main",   size:"mid" },
+  { id:"side",   label:"副菜", ruby:"ふくさい",   tray:"pos-side",   size:"mid" },
+  { id:"soup",   label:"汁もの", ruby:"しるもの", tray:"pos-soup",   size:"sml" }
+];
+const GROUPS = [
+  { key:"y", name:"黄", shape:"★", color:"#F6AA00", role:"エネルギーのもと" },
+  { key:"r", name:"赤", shape:"●", color:"#FF4B00", role:"体をつくるもと" },
+  { key:"g", name:"緑", shape:"■", color:"#03AF7A", role:"体のちょうしを ととのえるもと" }
+];
+/* pts: y=黄 r=赤 g=緑 / method: 調理法 / alg: アレルゲン(29品目) */
+const DISHES = [
+  /* 主食 */
+  { id:"gohan", cat:"staple", name:"白ごはん", em:"🍚", y:3,r:0,g:0, method:"たく", alg:[] },
+  { id:"pan", cat:"staple", name:"パン", em:"🍞", y:3,r:0,g:0, method:"そのまま", alg:["小麦","乳"] },
+  { id:"udon", cat:"staple", name:"うどん", em:"🍜", y:3,r:0,g:0, method:"ゆでる", alg:["小麦"] },
+  { id:"curry", cat:"staple", name:"カレーライス", em:"🍛", y:3,r:2,g:1, method:"にる", alg:["小麦","乳","大豆"] },
+  { id:"yakisoba", cat:"staple", name:"やきそば", em:"🍝", y:3,r:1,g:1, method:"いためる", alg:["小麦"] },
+  { id:"onigiri", cat:"staple", name:"おにぎり", em:"🍙", y:3,r:0,g:0, method:"そのまま", alg:[] },
+  /* 主菜 */
+  { id:"sake", cat:"main", name:"さけの しおやき", em:"🐟", y:0,r:3,g:0, method:"やく", alg:["さけ"] },
+  { id:"karaage", cat:"main", name:"とりの からあげ", em:"🍗", y:1,r:3,g:0, method:"あげる", alg:["小麦","大豆","鶏肉"] },
+  { id:"ebifry", cat:"main", name:"エビフライ", em:"🍤", y:1,r:2,g:0, method:"あげる", alg:["えび","小麦","卵"] },
+  { id:"hamburg", cat:"main", name:"ハンバーグ", em:"🍖", y:1,r:3,g:0, method:"やく", alg:["小麦","卵","乳","牛肉","豚肉"] },
+  { id:"shogayaki", cat:"main", name:"ぶたの しょうがやき", em:"🥩", y:0,r:3,g:0, method:"いためる", alg:["小麦","大豆","豚肉"] },
+  { id:"tamagoyaki", cat:"main", name:"たまごやき", em:"🍳", y:1,r:2,g:0, method:"やく", alg:["卵"] },
+  { id:"gyoza", cat:"main", name:"ぎょうざ", em:"🥟", y:1,r:2,g:1, method:"やく", alg:["小麦","豚肉","大豆"] },
+  /* 副菜 */
+  { id:"ohitashi", cat:"side", name:"ほうれん草の おひたし", em:"🥬", y:0,r:0,g:3, method:"ゆでる", alg:["大豆"] },
+  { id:"salad", cat:"side", name:"サラダ", em:"🥗", y:0,r:0,g:3, method:"そのまま", alg:[] },
+  { id:"potesara", cat:"side", name:"ポテトサラダ", em:"🥔", y:2,r:1,g:1, method:"ゆでる", alg:["卵"], potato:true },
+  { id:"kinpira", cat:"side", name:"きんぴらごぼう", em:"🥕", y:1,r:0,g:2, method:"いためる", alg:["ごま","大豆"] },
+  { id:"nikujaga", cat:"side", name:"肉じゃが", em:"🍲", y:2,r:2,g:1, method:"にる", alg:["牛肉","大豆"], potato:true },
+  { id:"hijiki", cat:"side", name:"ひじきの にもの", em:"🫘", y:0,r:1,g:2, method:"にる", alg:["大豆"] },
+  /* 汁もの */
+  { id:"wakame", cat:"soup", name:"わかめの みそしる", em:"🍵", y:0,r:1,g:1, method:"にる", alg:["大豆"] },
+  { id:"tonjiru", cat:"soup", name:"とんじる", em:"🍲", y:1,r:2,g:2, method:"にる", alg:["豚肉","大豆"] },
+  { id:"cornsoup", cat:"soup", name:"コーンスープ", em:"🌽", y:2,r:1,g:0, method:"にる", alg:["乳"] },
+  { id:"tamagosoupe", cat:"soup", name:"たまごスープ", em:"🥣", y:0,r:1,g:1, method:"にる", alg:["卵","鶏肉"] },
+  { id:"kenchin", cat:"soup", name:"けんちんじる", em:"🍵", y:1,r:1,g:2, method:"にる", alg:["大豆","ごま"] },
+  { id:"tofumiso", cat:"soup", name:"とうふの みそしる", em:"🥣", y:0,r:1,g:1, method:"にる", alg:["大豆"] }
+];
+const TOPPINGS = [
+  { id:"tp-wakame", name:"わかめ", em:"🌿", y:0,r:0,g:1, alg:[] },
+  { id:"tp-ninjin", name:"にんじん", em:"🥕", y:0,r:0,g:1, alg:[] },
+  { id:"tp-negi", name:"ねぎ", em:"🌱", y:0,r:0,g:1, alg:[] },
+  { id:"tp-nori", name:"のり", em:"⬛", y:0,r:0,g:1, alg:[] },
+  { id:"tp-cheese", name:"チーズ", em:"🧀", y:0,r:1,g:0, alg:["乳"] },
+  { id:"tp-katsuo", name:"かつおぶし", em:"🐟", y:0,r:1,g:0, alg:[] },
+  { id:"tp-natto", name:"なっとう", em:"🫘", y:0,r:1,g:0, alg:["大豆"] },
+  { id:"tp-corn", name:"コーン", em:"🌽", y:1,r:0,g:0, alg:[] }
+];
+const byId = {};
+DISHES.concat(TOPPINGS).forEach(d => byId[d.id] = d);
+
+/* ================= state ================= */
+const MENU_KEY = "kondateLab.menu.v1";
+const SET_KEY = "kondateLab.settings.v1";
+let state = { staple:null, main:null, side:null, soup:null, toppings:[] };
+let activeTab = "staple";
+let soundOn = true;
+try {
+  const saved = JSON.parse(localStorage.getItem(MENU_KEY) || "null");
+  if (saved && typeof saved === "object") {
+    CATS.forEach(c => { if (saved[c.id] && byId[saved[c.id]]) state[c.id] = saved[c.id]; });
+    if (Array.isArray(saved.toppings)) state.toppings = saved.toppings.filter(id => byId[id]).slice(0,3);
+  }
+  const set = JSON.parse(localStorage.getItem(SET_KEY) || "null");
+  if (set && typeof set.sound === "boolean") soundOn = set.sound;
+} catch(e) {}
+function save() {
+  try {
+    localStorage.setItem(MENU_KEY, JSON.stringify(state));
+    localStorage.setItem(SET_KEY, JSON.stringify({ sound: soundOn }));
+  } catch(e) {}
+}
+
+/* ================= sound ================= */
+let soundMod = null, audioCtx = null;
+async function loadSound() {
+  if (soundMod) return soundMod;
+  try {
+    soundMod = await import("https://tt-sensei.github.io/sounds-recipe-/sounds.js");
+  } catch(e) { soundMod = null; }
+  return soundMod;
+}
+async function play(id) {
+  if (!soundOn) return;
+  const m = await loadSound();
+  if (!m || typeof m.playSound !== "function") return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    m.playSound(audioCtx, id, 0.7);
+  } catch(e) {}
+}
+
+/* ================= guide ================= */
+const EXPR = "https://tt-sensei.github.io/navi-character-/assets/web/characters/saku/expressions/";
+const guideImg = document.getElementById("guideImg");
+const guideLine = document.getElementById("guideLine");
+guideImg.addEventListener("error", () => { guideImg.style.display = "none"; });
+function guideSay(text, expr) {
+  guideLine.textContent = text;
+  guideImg.src = EXPR + expr + ".webp";
+}
+
+/* ================= totals & judge ================= */
+function totals() {
+  const t = { y:0, r:0, g:0 };
+  CATS.forEach(c => { const d = byId[state[c.id]]; if (d) { t.y+=d.y; t.r+=d.r; t.g+=d.g; } });
+  state.toppings.forEach(id => { const d = byId[id]; if (d) { t.y+=d.y; t.r+=d.r; t.g+=d.g; } });
+  return t;
+}
+function selectedDishes() {
+  return CATS.map(c => byId[state[c.id]]).filter(Boolean);
+}
+function judge() {
+  const t = totals();
+  const dishes = selectedDishes();
+  const msgs = [];
+  let level = "building";
+  const missing = 4 - dishes.length;
+  if (dishes.length === 0 && state.toppings.length === 0) {
+    return { level:"none", title:"こんだてを 作ってみよう", msgs:["右の ボタンから おかずを えらんでね。おまかせ ランダムも あるよ。"], t };
+  }
+  if (missing > 0) msgs.push("あと " + missing + "品 えらぶと、1食分に なるよ。");
+  const fry = dishes.filter(d => d.method === "あげる").length;
+  const potato = dishes.filter(d => d.potato).length;
+  let skewed = false;
+  GROUPS.forEach(gr => {
+    const v = t[gr.key];
+    if (v <= 2 && missing === 0) {
+      skewed = true;
+      if (gr.key === "g") msgs.push("緑（体のちょうし）が たりないよ。野菜の おかずや、ちょい足しを たしてみよう。");
+      else if (gr.key === "r") msgs.push("赤（体をつくる）が たりないよ。肉・魚・たまご・とうふの おかずを 見てみよう。");
+      else msgs.push("黄（エネルギー）が たりないよ。主食を しっかり えらぼう。");
+    } else if (v >= 7) {
+      skewed = true;
+      msgs.push(gr.name + "が 多めだよ。" + (gr.key === "y" ? "いもや パンが かさなっていないか 見てみよう。" : "おかずを 1品 かえてみよう。"));
+    }
+  });
+  if (fry >= 2) { skewed = true; msgs.push("あげものが かさなっているよ。1品を「やく」「にる」に かえてみよう。"); }
+  if (potato >= 2) { skewed = true; msgs.push("いもが かさなっているよ。黄が 多くなりやすいから 気をつけよう。"); }
+  const allIn = GROUPS.every(gr => t[gr.key] >= 3 && t[gr.key] <= 6);
+  if (missing === 0 && allIn && fry < 2 && potato < 2) {
+    level = "good";
+    return { level, title:"バランス ばっちり！🎉", msgs:["3色が そろった、理想のこんだてだね。お膳の ならべ方も チェックしてみよう。"], t };
+  }
+  if (skewed) level = "skewed";
+  if (msgs.length === 0) msgs.push("いい感じ！ 3色の ポイントを 見ながら、もう少し 工夫してみよう。");
+  return { level, title: level === "skewed" ? "あと少し 工夫できそう" : "作っている とちゅう", msgs: msgs.slice(0,3), t };
+}
+
+/* ================= render ================= */
+const slotsEl = document.getElementById("slots");
+const tabsEl = document.getElementById("tabs");
+const gridEl = document.getElementById("grid");
+const gridHead = document.getElementById("gridHead");
+
+function rubyLabel(c) { return "<ruby>" + c.label + "<rt>" + c.ruby + "</rt></ruby>"; }
+
+function renderSlots() {
+  slotsEl.innerHTML = "";
+  CATS.forEach(c => {
+    const d = byId[state[c.id]];
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "slot" + (d ? " filled" : "") + (activeTab === c.id ? " active" : "");
+    b.innerHTML = "<div class='cat'>" + rubyLabel(c) + "</div>" +
+      (d ? "<div class='dish'>" + d.em + " " + d.name + "</div>"
+         : "<div class='dish none'>えらんでね</div>");
+    b.addEventListener("click", () => { activeTab = c.id; play("click"); renderAll(false); });
+    slotsEl.appendChild(b);
+  });
+}
+function renderTabs() {
+  tabsEl.innerHTML = "";
+  CATS.concat([{ id:"topping", label:"ちょい足し", ruby:"ちょいたし" }]).forEach(c => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tab" + (activeTab === c.id ? " active" : "");
+    b.innerHTML = rubyLabel(c);
+    b.addEventListener("click", () => { activeTab = c.id; play("click"); renderAll(false); });
+    tabsEl.appendChild(b);
+  });
+}
+function ptsHtml(d) {
+  const one = (gr) => {
+    const v = d[gr.key];
+    return "<span class='" + (v === 0 ? "zero" : "") + "' style='" + (v > 0 ? "color:" + gr.color : "") + "'>" + gr.shape + v + "</span>";
+  };
+  return GROUPS.map(one).join(" ");
+}
+function dishButton(d, selected, onClick) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "dish-btn" + (selected ? " selected" : "");
+  b.dataset.dishId = d.id;
+  const meta = [];
+  if (d.method) meta.push("調理法： " + d.method);
+  if (d.alg && d.alg.length) meta.push("アレルギー： " + d.alg.join("・"));
+  b.innerHTML =
+    "<div class='top'><span class='em'>" + d.em + "</span><span class='nm'>" + d.name + "</span><span class='check'>✔</span></div>" +
+    "<div class='pts'>" + ptsHtml(d) + "</div>" +
+    (meta.length ? "<div class='meta'>" + meta.join("<br>") + "</div>" : "");
+  b.addEventListener("click", onClick);
+  return b;
+}
+function renderGrid() {
+  gridEl.innerHTML = "";
+  if (activeTab === "topping") {
+    gridHead.textContent = "ちょい足し食材（最大3つまで）： 汁ものや おかずに たして、たりない色を おぎなおう";
+    TOPPINGS.forEach(d => {
+      const sel = state.toppings.includes(d.id);
+      gridEl.appendChild(dishButton(d, sel, () => toggleTopping(d.id)));
+    });
+    return;
+  }
+  const cat = CATS.find(c => c.id === activeTab);
+  gridHead.textContent = cat.label + "を えらぼう（もう一度 おすと はずれるよ）";
+  DISHES.filter(d => d.cat === activeTab).forEach(d => {
+    const sel = state[activeTab] === d.id;
+    gridEl.appendChild(dishButton(d, sel, () => selectDish(activeTab, d.id)));
+  });
+}
+function renderTray() {
+  CATS.forEach(c => {
+    const el = document.getElementById(c.tray);
+    const d = byId[state[c.id]];
+    el.className = "bowl " + c.size + (d ? "" : " empty");
+    el.innerHTML = d
+      ? "<span class='em'>" + d.em + "</span><span class='nm'>" + d.name + "</span>"
+      : "<span class='nm'>" + rubyLabel(c) + "</span>";
+  });
+}
+function renderBars(t) {
+  const set = (id, numId, v) => {
+    document.getElementById(id).style.width = Math.min(100, v / 9 * 100) + "%";
+    document.getElementById(numId).textContent = v;
+  };
+  set("barY", "numY", t.y); set("barR", "numR", t.r); set("barG", "numG", t.g);
+}
+function renderJudge(j) {
+  const title = document.getElementById("judgeTitle");
+  title.textContent = j.title;
+  title.className = "judge-title" + (j.level === "good" ? " good" : (j.level === "skewed" ? " warn" : ""));
+  const ul = document.getElementById("judgeList");
+  ul.innerHTML = "";
+  j.msgs.forEach(m => { const li = document.createElement("li"); li.textContent = m; ul.appendChild(li); });
+  const alg = new Set();
+  selectedDishes().concat(state.toppings.map(id => byId[id])).forEach(d => (d.alg || []).forEach(a => alg.add(a)));
+  document.getElementById("allergenLine").textContent =
+    "アレルギー表示（29品目）： " + (alg.size ? Array.from(alg).join("・") : "ふくまれていません");
+}
+let wasGood = false;
+function renderAll(updateGuide) {
+  renderSlots(); renderTabs(); renderGrid(); renderTray();
+  const j = judge();
+  renderBars(j.t); renderJudge(j);
+  if (updateGuide !== false) {
+    if (j.level === "good") {
+      guideSay("バランス ばっちり！ 3色そろったね。", "08-celebrating");
+      if (!wasGood) {
+        play("correct");
+        const tray = document.getElementById("tray");
+        if (window.EduEffects && tray) { try { EduEffects.confetti(tray, 26); } catch(e) {} }
+      }
+    } else if (j.level === "skewed") {
+      guideSay("あと少し！ ヒントを 見て 工夫してみよう。", "04-idea");
+    } else if (j.level === "building") {
+      guideSay("いい感じに 作れているよ。その調子！", "02-happy");
+    } else {
+      guideSay("4つの おかずを えらんで、理想のこんだてを 作ろう！", "01-normal-smile");
+    }
+  }
+  wasGood = (j.level === "good");
+  save();
+}
+
+/* ================= actions ================= */
+function selectDish(catId, dishId) {
+  state[catId] = (state[catId] === dishId) ? null : dishId;
+  play("decide");
+  renderAll(true);
+}
+function toggleTopping(id) {
+  const i = state.toppings.indexOf(id);
+  if (i >= 0) state.toppings.splice(i, 1);
+  else {
+    if (state.toppings.length >= 3) { guideSay("ちょい足しは 3つまでだよ。", "05-surprised"); return; }
+    state.toppings.push(id);
+  }
+  play("decide");
+  renderAll(true);
+}
+document.getElementById("btnRandom").addEventListener("click", () => {
+  CATS.forEach(c => {
+    const list = DISHES.filter(d => d.cat === c.id);
+    state[c.id] = list[Math.floor(Math.random() * list.length)].id;
+  });
+  state.toppings = [];
+  if (Math.random() < 0.45) {
+    state.toppings.push(TOPPINGS[Math.floor(Math.random() * TOPPINGS.length)].id);
+  }
+  play("decide");
+  renderAll(false);
+  guideSay("おまかせで えらんだよ。よりよく できるかな？", "05-surprised");
+  save();
+});
+document.getElementById("btnReset").addEventListener("click", () => {
+  state = { staple:null, main:null, side:null, soup:null, toppings:[] };
+  play("click");
+  renderAll(true);
+});
+const btnSound = document.getElementById("btnSound");
+function paintSound() { btnSound.textContent = soundOn ? "🔊" : "🔇"; }
+btnSound.addEventListener("click", () => { soundOn = !soundOn; paintSound(); save(); if (soundOn) play("click"); });
+paintSound();
+renderAll(true);
+</script>
+</body>
+</html>
