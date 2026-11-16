@@ -221,7 +221,7 @@
         <div class="bar-track"><div class="bar-fill" id="barG" style="background:#03AF7A"></div></div>
         <div class="bar-num" id="numG">0</div>
       </div>
-      <div class="bar-note">各色3〜6ポイントが、学習用のバランスの目安だよ</div>
+      <div class="bar-note">ポイントは食品のはたらきを考えるための学習用目安です。実際の栄養量ではありません。</div>
     </div>
 
     <div class="card judge-card is-hidden" id="judgeCard">
@@ -484,13 +484,6 @@ function renderTabs() {
     tabsEl.appendChild(b);
   });
 }
-function ptsHtml(d) {
-  const one = (gr) => {
-    const v = d[gr.key];
-    return "<span class='" + (v === 0 ? "zero" : "") + "' style='" + (v > 0 ? "color:" + gr.color : "") + "'>" + gr.shape + v + "</span>";
-  };
-  return GROUPS.map(one).join(" ");
-}
 function dishButton(d, selected, onClick) {
   const b = document.createElement("button");
   b.type = "button";
@@ -542,7 +535,7 @@ function renderBars(t) {
 }
 function renderJudge(j) {
   const title = document.getElementById("judgeTitle");
-  title.textContent = j.title;
+  title.textContent = challengeMode && j.level === "good" ? "チャレンジ達成！🎉" : j.title;
   title.className = "judge-title" + (j.level === "good" ? " good" : (j.level === "skewed" ? " warn" : ""));
   const ul = document.getElementById("judgeList");
   ul.innerHTML = "";
